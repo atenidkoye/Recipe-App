@@ -1,9 +1,7 @@
 import express from "express";
+
 import authRoutes from "./features/auth/auth.routes.js";
-import {
-  authMiddleware,
-  AuthRequest
-} from "./middleware/authMiddleware.js";
+import recipeRoutes from "./features/recipes/recipes.routes.js";
 
 const app = express();
 
@@ -17,15 +15,6 @@ app.get("/", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 
-app.get(
-  "/api/protected",
-  authMiddleware,
-  (req: AuthRequest, res) => {
-    res.json({
-      message: "You are authenticated!",
-      userId: req.userId
-    });
-  }
-);
+app.use("/api/recipes", recipeRoutes);
 
 export default app;
