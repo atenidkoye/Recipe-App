@@ -2,6 +2,7 @@ import express from "express";
 
 import authRoutes from "./features/auth/auth.routes.js";
 import recipeRoutes from "./features/recipes/recipes.routes.js";
+import ingredientRoutes from "./features/ingredients/ingredients.routes.js";
 
 const app = express();
 
@@ -16,5 +17,7 @@ app.get("/", (_req, res) => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/recipes", recipeRoutes);
+
+app.use("/api/ingredients", ingredientRoutes);
 
 export default app;
