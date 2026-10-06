@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Button, TextInput, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, Button, TextInput, TouchableOpacity } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import staticStyles from '../static/styles';
 
 const LoginScreen = () => {
@@ -29,7 +30,7 @@ const LoginScreen = () => {
           />
 
           <View style={staticStyles.rowButtons}>
-            <TouchableOpacity style={staticStyles.halfButton}>
+            <TouchableOpacity style={staticStyles.halfButton} onPress={() => navigation.navigate("Recipe List")}>
               <Text style={staticStyles.buttonText}>Login</Text>
             </TouchableOpacity>
 

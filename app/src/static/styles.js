@@ -8,7 +8,7 @@ const staticStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    // Start Page
+    // Start Screen
     safeArea: {
         flex: 1,
         backgroundColor: "white",
@@ -73,7 +73,7 @@ const staticStyles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '400',
     },
-    // Start page ends
+    // Start screen ends
 });
 
 export default staticStyles;
