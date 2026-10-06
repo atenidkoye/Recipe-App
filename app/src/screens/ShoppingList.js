@@ -6,7 +6,7 @@ const ShoppingList = () => {
   return (
     <View style={staticStyles.centered}>
       <Text>Shopping List</Text>
-      <Navigation />
+      <Navigation activeTab="Shopping List"/>
     </View>
   )
 }
