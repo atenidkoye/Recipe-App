@@ -1,10 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { useContext, useState } from "react";
-import { View, Text, Button, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import staticStyles from '../static/styles';
 import AuthContext from "../components/AuthContext";
-import { login } from "../utils/auth";
+import { continueAsGuest, login } from "../utils/auth";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -14,15 +14,6 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
 
   return (
-    // <View style={[{flexDirection: "column", gap: 20}, staticStyles.centered]}>
-    //   <Text>Login View</Text>
-
-    //   <TextInput style={{borderWidth: 1, borderColor: "black", width: 200}} onChangeText={setEmail} />
-    //   <TextInput style={{borderWidth: 1, borderColor: "black", width: 200}} onChangeText={setPassword} />
-    //   <Button title="Login" onPress={() => login(email, password, setUser)}/>
-
-    //   <Button title="I don't have an account" onPress={() => navigation.navigate("Register")} />
-    // </View>
     <SafeAreaView style={staticStyles.safeArea}>
       <View style={staticStyles.container}>
         <Text style={staticStyles.headerText}>Welcome!</Text>
@@ -30,31 +21,29 @@ const LoginScreen = () => {
         <View style={staticStyles.form}>
           <Text style={staticStyles.label}>Email</Text>
           <TextInput 
-          style={staticStyles.input}
-          placeholder="Email"
-          onChangeText={setEmail}
+            style={staticStyles.input}
+            placeholder="Email"
+            onChangeText={setEmail}
           />
 
           <Text style={staticStyles.label}>Password</Text>
           <TextInput 
-          style={staticStyles.input}
-          placeholder="Password"
-          secureTextEntry={true}
-          onChangeText={setPassword}
+            style={staticStyles.input}
+            placeholder="Password"
+            secureTextEntry={true}
+            onChangeText={setPassword}
           />
 
           <TouchableOpacity style={staticStyles.fullButton} onPress={() => login(email, password, setUser)}>
             <Text style={staticStyles.buttonText}>Login</Text>
           </TouchableOpacity>
 
-          <Text style={staticStyles.label2}>I don't have an account</Text>
-
-          <View style={staticStyles.rowButtons}>
+          <View style={[staticStyles.rowButtons, {marginTop: 20}]}>
             <TouchableOpacity style={staticStyles.halfButton} onPress={() => navigation.navigate("Register")}>
               <Text style={staticStyles.buttonText}>Register</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={staticStyles.halfButton} onPress={() => navigation.navigate("Recipe List")}>
+            <TouchableOpacity style={staticStyles.halfButton} onPress={() => continueAsGuest(setUser)}>
               <Text style={staticStyles.buttonText}>Continue as Guest</Text>
             </TouchableOpacity>
           </View>

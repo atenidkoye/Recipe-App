@@ -6,11 +6,10 @@ import AuthContext from "../components/AuthContext";
 import { logout } from "../utils/auth";
 
 const Account = () => {
-  const {setUser} = useContext(AuthContext);
-
+  const {user, setUser} = useContext(AuthContext);
   return (
     <View style={staticStyles.centered}>
-      <Text>Account</Text>
+      <Text>{user ? user.name : ""}</Text>
       <Button title="Log out" onPress={() => logout(setUser)}/>
       <Navigation />
     </View>
