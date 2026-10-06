@@ -33,12 +33,10 @@ const staticStyles = StyleSheet.create({
     },
     label: {
         fontSize: 16,
-        color: '#333333',
         marginBottom: 8,
     },
     label2: {
         fontSize: 16,
-        color: '#333333',
         marginTop: 5,
     },
     input: {
@@ -50,7 +48,6 @@ const staticStyles = StyleSheet.create({
         paddingVertical: 12,
         marginBottom: 20,
         fontSize: 16,
-        color: '#333333',
     },
     rowButtons: {
         flexDirection: 'row',
@@ -85,6 +82,63 @@ const staticStyles = StyleSheet.create({
         fontWeight: '400',
     },
     // login/register screen ends
+
+    // recipe list screen
+    searchContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#E7DDF7',
+        marginHorizontal: 10,
+        borderRadius: 25,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        alignItems: 'center',
+        marginBottom: 25,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 16,
+    },
+    searchIcon: {
+        resizeMode: 'contain',
+        marginLeft: 10,
+    },
+    mainContent: {
+        flex: 1,
+        paddingTop: 10,
+    },
+    listContainer: {
+        flex: 1,
+    },
+    loader: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    recipeCard: {
+        flexDirection: 'row',
+        backgroundColor: '#E7DDF7',
+        borderRadius: 12,
+        padding: 30,
+        marginBottom: 15,
+        alignItems: 'center',
+    },
+    recipeTextContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    category: {
+        fontSize: 12,
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    name: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginBottom: 4,
+    },
+    description: {
+        fontSize: 12
+    },
+    // recipe list screen ends
 });
 
 export default staticStyles;

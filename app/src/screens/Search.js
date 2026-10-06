@@ -6,7 +6,7 @@ const Search = () => {
   return (
     <View style={staticStyles.centered}>
       <Text>Search</Text>
-      <Navigation />
+      <Navigation activeTab="Search"/>
     </View>
   )
 }

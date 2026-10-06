@@ -12,7 +12,7 @@ const Account = () => {
     <View style={staticStyles.centered}>
       <Text>Account</Text>
       <Button title="Log out" onPress={() => logout(setUser)}/>
-      <Navigation />
+      <Navigation activeTab="Account"/>
     </View>
   )
 }
