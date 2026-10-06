@@ -8,7 +8,7 @@ const staticStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    // Start Screen
+    // login/register screen
     safeArea: {
         flex: 1,
         backgroundColor: "white",
@@ -36,6 +36,11 @@ const staticStyles = StyleSheet.create({
         color: '#333333',
         marginBottom: 8,
     },
+    label2: {
+        fontSize: 16,
+        color: '#333333',
+        marginTop: 5,
+    },
     input: {
         backgroundColor: 'white',
         borderRadius: 6,
@@ -50,6 +55,12 @@ const staticStyles = StyleSheet.create({
     rowButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginBottom: 20,
+        marginTop: 10,
+    },
+    rowButtons2: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         marginBottom: 20,
         marginTop: 10,
     },
@@ -73,7 +84,7 @@ const staticStyles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '400',
     },
-    // Start screen ends
+    // login/register screen ends
 });
 
 export default staticStyles;
