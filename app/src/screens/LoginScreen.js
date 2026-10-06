@@ -14,16 +14,15 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
 
   return (
-    <View style={[{flexDirection: "column", gap: 20}, staticStyles.centered]}>
-      <Text>Login View</Text>
+    // <View style={[{flexDirection: "column", gap: 20}, staticStyles.centered]}>
+    //   <Text>Login View</Text>
 
-      <TextInput style={{borderWidth: 1, borderColor: "black", width: 200}} onChangeText={setEmail} />
-      <TextInput style={{borderWidth: 1, borderColor: "black", width: 200}} onChangeText={setPassword} />
-      <Button title="Login" onPress={() => login(email, password, setUser)}/>
+    //   <TextInput style={{borderWidth: 1, borderColor: "black", width: 200}} onChangeText={setEmail} />
+    //   <TextInput style={{borderWidth: 1, borderColor: "black", width: 200}} onChangeText={setPassword} />
+    //   <Button title="Login" onPress={() => login(email, password, setUser)}/>
 
-      <Button title="I don't have an account" onPress={() => navigation.navigate("Register")} />
-    </View>
-    /*
+    //   <Button title="I don't have an account" onPress={() => navigation.navigate("Register")} />
+    // </View>
     <SafeAreaView style={staticStyles.safeArea}>
       <View style={staticStyles.container}>
         <Text style={staticStyles.headerText}>Welcome!</Text>
@@ -33,6 +32,7 @@ const LoginScreen = () => {
           <TextInput 
           style={staticStyles.input}
           placeholder="Email"
+          onChangeText={setEmail}
           />
 
           <Text style={staticStyles.label}>Password</Text>
@@ -40,26 +40,28 @@ const LoginScreen = () => {
           style={staticStyles.input}
           placeholder="Password"
           secureTextEntry={true}
+          onChangeText={setPassword}
           />
 
-          <View style={staticStyles.rowButtons}>
-            <TouchableOpacity style={staticStyles.halfButton} onPress={() => navigation.navigate("Recipe List")}>
-              <Text style={staticStyles.buttonText}>Login</Text>
-            </TouchableOpacity>
+          <TouchableOpacity style={staticStyles.fullButton} onPress={() => login(email, password, setUser)}>
+            <Text style={staticStyles.buttonText}>Login</Text>
+          </TouchableOpacity>
 
+          <Text style={staticStyles.label2}>I don't have an account</Text>
+
+          <View style={staticStyles.rowButtons}>
             <TouchableOpacity style={staticStyles.halfButton} onPress={() => navigation.navigate("Register")}>
               <Text style={staticStyles.buttonText}>Register</Text>
             </TouchableOpacity>
-          </View>
 
-          <TouchableOpacity style={staticStyles.fullButton}>
-            <Text style={staticStyles.buttonText}>Continue as Guest</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={staticStyles.halfButton} onPress={() => navigation.navigate("Recipe List")}>
+              <Text style={staticStyles.buttonText}>Continue as Guest</Text>
+            </TouchableOpacity>
+          </View>
 
         </View>
       </View>
     </SafeAreaView>
-    */
   )
 }
 
