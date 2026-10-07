@@ -15,6 +15,7 @@ import Account from './src/screens/Account';
 import ShoppingList from './src/screens/ShoppingList';
 import Search from './src/screens/Search';
 import User from './src/utils/types/user';
+import { isTokenValid } from './src/utils/auth';
 
 const Stack = createStackNavigator();
 
@@ -27,9 +28,11 @@ const App = () => {
     // Try to get user data from local storage
     // TODO: add a loading screen while fetching data
     // TODO: check wheter the token is still valid
-    getUserData().then(userData => {
+    getUserData().then(async (userData) => {
       if (userData && !user) {
-        setUser(new User(User.NOT_GUEST, userData.id, userData.name, userData.email, userData.token));
+        if (await isTokenValid(userData.token)) { // Only log in user if the token is still valid
+          setUser(new User(User.NOT_GUEST, userData.id, userData.name, userData.email, userData.token));
+        }
       }
     });
 

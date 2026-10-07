@@ -91,3 +91,15 @@ export const logout = async (setUser) => {
   await deleteUserData(); // Delete old user data from local storage
   setUser(null);
 }
+
+export const isTokenValid = async (token) => {
+  const response = await fetch("http://10.0.2.2:4000/api/auth/validation", {
+    method: "GET",
+    headers: {
+      "authorization": `Bearer ${token}`
+    },
+    signal: AbortSignal.timeout(5000)
+  });
+
+  return response.ok;
+}

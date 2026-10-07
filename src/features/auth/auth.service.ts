@@ -45,7 +45,7 @@ export const authService = {
     const token = jwt.sign(
       { userId: user.id },
       JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "14d" }
     );
 
     return { user, token };
@@ -72,7 +72,7 @@ export const authService = {
     const token = jwt.sign(
       { userId: user.id },
       JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "14d" }
     );
 
     const safeUser = authRepository.findById(user.id);
