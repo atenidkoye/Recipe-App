@@ -1,7 +1,11 @@
-import { NavigationContainer, useNavigation, useNavigationContainerRef } from '@react-navigation/native';
+// React
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useEffect, useState } from 'react';
+
+// Auth management
 import AuthContext from './src/components/AuthContext';
+import { getUserData } from './src/utils/db';
 
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
@@ -10,18 +14,33 @@ import RecipeList from './src/screens/RecipeList';
 import Account from './src/screens/Account';
 import ShoppingList from './src/screens/ShoppingList';
 import Search from './src/screens/Search';
+import User from './src/utils/types/user';
+import { isTokenValid } from './src/utils/auth';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   const navigation = useNavigationContainerRef();
-  const [user, setUser] = useState({});
+
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      navigation.navigate("Recipe List"); 
-    } else {
+    // Try to get user data from local storage
+    // TODO: add a loading screen while fetching data
+    // TODO: check wheter the token is still valid
+    getUserData().then(async (userData) => {
+      if (userData && !user) {
+        if (await isTokenValid(userData.token)) { // Only log in user if the token is still valid
+          setUser(new User(User.NOT_GUEST, userData.id, userData.name, userData.email, userData.token));
+        }
+      }
+    });
+
+    // After user changes (login, register, logout, continue as guest, data from local storage) change screen
+    if (!user) {
       navigation.navigate("Login");
+    } else {
+      navigation.navigate("Recipe List"); 
     }
   }, [user])
 

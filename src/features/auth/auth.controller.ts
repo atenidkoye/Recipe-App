@@ -34,5 +34,9 @@ export const authController = {
         message: "Invalid email or password"
       });
     }
+  },
+
+  async validate(req: Request, res: Response): Promise<void> {
+    res.status(200).send();
   }
 };
