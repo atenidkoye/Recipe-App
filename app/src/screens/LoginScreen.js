@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { useContext, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import staticStyles from '../static/styles';
 import AuthContext from "../components/AuthContext";
 import { continueAsGuest, login } from "../utils/auth";
+import TextButton from "../components/TextButton";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -34,18 +35,11 @@ const LoginScreen = () => {
             onChangeText={setPassword}
           />
 
-          <TouchableOpacity style={staticStyles.fullButton} onPress={() => login(email, password, setUser)}>
-            <Text style={staticStyles.buttonText}>Login</Text>
-          </TouchableOpacity>
+          <TextButton style={staticStyles.fullButton} buttonText="Login" onPress={() => login(email, password, setUser)}/>
 
           <View style={[staticStyles.rowButtons, {marginTop: 20}]}>
-            <TouchableOpacity style={staticStyles.halfButton} onPress={() => navigation.navigate("Register")}>
-              <Text style={staticStyles.buttonText}>Register</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={staticStyles.halfButton} onPress={() => continueAsGuest(setUser)}>
-              <Text style={staticStyles.buttonText}>Continue as Guest</Text>
-            </TouchableOpacity>
+            <TextButton style={staticStyles.halfButton} buttonText="Create account" onPress={() => navigation.navigate("Register")}/>
+            <TextButton style={staticStyles.halfButton} buttonText="Continue as Guest" onPress={() => continueAsGuest(setUser)} />
           </View>
 
         </View>
