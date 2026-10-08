@@ -9,6 +9,12 @@ import {
   deleteRecipe
 } from "./recipes.controller.js";
 
+import {
+  addCategoryToRecipe,
+  getRecipeCategories,
+  removeCategoryFromRecipe
+} from "../categories/recipecategories.controller.js";
+
 import { authMiddleware } from "../../middleware/authMiddleware.js";
 
 const router = Router();
@@ -27,6 +33,23 @@ router.post(
   "/",
   authMiddleware,
   createRecipe
+);
+
+router.post(
+  "/:recipeId/categories/:categoryId",
+  authMiddleware,
+  addCategoryToRecipe
+);
+
+router.get(
+  "/:recipeId/categories",
+  getRecipeCategories
+);
+
+router.delete(
+  "/:recipeId/categories/:categoryId",
+  authMiddleware,
+  removeCategoryFromRecipe
 );
 
 router.put(
