@@ -3,6 +3,7 @@ import express from "express";
 import authRoutes from "./features/auth/auth.routes.js";
 import recipeRoutes from "./features/recipes/recipes.routes.js";
 import ingredientRoutes from "./features/ingredients/ingredients.routes.js";
+import categoryRoutes from "./features/categories/categories.routes.js";
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
 
 app.use("/api/ingredients", ingredientRoutes);
+app.use("/api/categories", categoryRoutes);
 
 export default app;
