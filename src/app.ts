@@ -5,6 +5,7 @@ import recipeRoutes from "./features/recipes/recipes.routes.js";
 import ingredientRoutes from "./features/ingredients/ingredients.routes.js";
 import categoryRoutes from "./features/categories/categories.routes.js";
 import favouriteRoutes from "./features/favorites/favorites.routes.js";
+import shoppingListRoutes from "./features/shopping_list/shopping-list.routes.js";
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.use("/api/recipes", recipeRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/favourites", favouriteRoutes);
+app.use("/api/shopping-list", shoppingListRoutes);
 
 export default app;
