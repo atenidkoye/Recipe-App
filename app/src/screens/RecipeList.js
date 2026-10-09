@@ -4,7 +4,7 @@ import staticStyles from '../static/styles';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useContext, useEffect, useRef, useState } from "react";
 import authContext from '../components/AuthContext';
-import { fetchRecipes } from "../utils/recipe";
+import { fetchRecipes, readRecipes } from "../utils/recipe";
 import { useNavigation } from "@react-navigation/native";
 
 const RecipeList = () => {
@@ -20,15 +20,23 @@ const RecipeList = () => {
   let searchTimeout = useRef(null);
   let loadingTimeout = useRef(null);
 
+
+  // Get recipe data
   useEffect(() => {
-    fetchRecipes(user, setRecipes);
+    if (user.isGuest) { // Guest user -> get data from the local storage
+      readRecipes(setRecipes);
+    } else { // Logged in user -> get data from the server
+      fetchRecipes(user.token, setRecipes);
+    }
   }, []);
 
+  // Recipe state changed
   useEffect(() => {
-    setLoading(recipes.length == 0);
+    setLoading(recipes.length == 0); // Loading if there are no recipes
     
-    if (loadingTimeout.current) clearTimeout(loadingTimeout.current);
+    if (loadingTimeout.current) clearTimeout(loadingTimeout.current); // Refresh timeout
     if (recipes.length == 0) {
+      // Mark user's recipe list as empty if no recipes show up after 2 (might change) seconds
       loadingTimeout.current = setTimeout(() => {
         setIsEmpty(true);
         setLoading(false);
@@ -36,11 +44,13 @@ const RecipeList = () => {
     }
   }, [recipes])
 
+  // Update search phrase state after user doesn't input any character in 1.5 seconds
   function updateSearchPhrase(phrase) {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     searchTimeout.current = setTimeout(() => setSearchPhrase(phrase), 1500);
   }
 
+  // One recipe componenent on the list
   const renderRecipe = ({item}) => (
     <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: item})}>
 
