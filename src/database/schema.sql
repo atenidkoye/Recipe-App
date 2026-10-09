@@ -63,3 +63,32 @@ CREATE TABLE IF NOT EXISTS recipe_categories (
         REFERENCES categories(id)
         ON DELETE CASCADE
 );
+
+
+
+-- SHOPPING LISTS
+CREATE TABLE IF NOT EXISTS shopping_lists (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL UNIQUE,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+-- SHOPPING LIST ITEMS
+CREATE TABLE IF NOT EXISTS shopping_list_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shopping_list_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    quantity REAL,
+    unit TEXT,
+    is_purchased INTEGER NOT NULL DEFAULT 0
+        CHECK (is_purchased IN (0, 1)),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (shopping_list_id)
+        REFERENCES shopping_lists(id)
+        ON DELETE CASCADE
+);
