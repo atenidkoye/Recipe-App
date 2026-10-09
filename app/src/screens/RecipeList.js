@@ -1,74 +1,72 @@
-import { View, Text, TextInput, FlatList, ActivityIndicator, Image } from "react-native";
+import { View, Text, TextInput, FlatList, ActivityIndicator, Image, TouchableOpacity } from "react-native";
 import Navigation from "../components/Navigation";
 import staticStyles from '../static/styles';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import authContext from '../components/AuthContext';
+import { fetchRecipes } from "../utils/recipe";
+import { useNavigation } from "@react-navigation/native";
 
 const RecipeList = () => {
+  const navigation = useNavigation();
+
+  const {user} = useContext(authContext);
+
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [searchPhrase, setSearchPhrase] = useState("");
 
-  const getRecipes = async () => {
-    try {
-      const responce = await fetch('http://10.0.2.2:4000/api/recipes');
-      const data = await responce.json();
-      setRecipes(data);
-      const dummyData = [
-        {id: '1', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-        {id: '2', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-        {id: '3', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-        {id: '4', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-        {id: '5', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-        {id: '6', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-        {id: '7', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-        {id: '8', category: 'Lorem ipsum', name: 'Salad', description: 'Lorem ipsum'},
-      ];
-
-      // if no data to show, then dummy data
-      setTimeout(() => {
-        setRecipes(dummyData);
-        setLoading(false);
-      }, 3000);
-    }
-    catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
-  }
+  let searchTimeout = useRef(null);
+  let loadingTimeout = useRef(null);
 
   useEffect(() => {
-    getRecipes();
+    fetchRecipes(user, setRecipes);
   }, []);
 
+  useEffect(() => {
+    setLoading(recipes.length == 0);
+    
+    if (loadingTimeout.current) clearTimeout(loadingTimeout.current);
+    if (recipes.length == 0) {
+      loadingTimeout.current = setTimeout(() => {
+        setIsEmpty(true);
+        setLoading(false);
+      }, 2000);
+    }
+  }, [recipes])
+
+  function updateSearchPhrase(phrase) {
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(() => setSearchPhrase(phrase), 1500);
+  }
+
   const renderRecipe = ({item}) => (
-    <View style={staticStyles.recipeCard}>
+    <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: item})}>
 
       <View style={staticStyles.recipeTextContainer}>
-        <Text style={staticStyles.category}>{item.category}</Text>
-        <Text style={staticStyles.name}>{item.name}</Text>
+        <Text style={staticStyles.category}>{item.categories.map(category => category.name + " ")}</Text>
+        <Text style={staticStyles.name}>{item.title}</Text>
         <Text style={staticStyles.description}>{item.description}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
-    // <View style={staticStyles.centered}>
-    //   <Text>Recipe List</Text>
-    //   <Navigation />
-    // </View>
     <SafeAreaView style={staticStyles.safeArea}>
       <View style={staticStyles.container}>
-        <Text style={staticStyles.headerText}>Recipe Screen</Text>
+        <Text style={staticStyles.headerText}>My recipes</Text>
 
         <View style={staticStyles.searchContainer}>
           <TextInput 
-          style={staticStyles.searchInput}
-          placeholder="Search recipe"
-          placeholderTextColor="black"
+            style={staticStyles.searchInput}
+            placeholder="Search recipe"
+            placeholderTextColor="black"
+            onChangeText={updateSearchPhrase}
           />
           <Image 
-          source={require('../img/search.png')}
-          style={staticStyles.searchIcon}
+            source={require('../static/img/search.png')}
+            style={staticStyles.searchIcon}
           />
         </View>
 
@@ -77,16 +75,20 @@ const RecipeList = () => {
             {loading ? (
               <ActivityIndicator size="large" color="#6A569E" style={staticStyles.loader}/>
             ) : (
-              <FlatList 
-              data={recipes}
-              keyExtractor={(item) => item.id}
-              renderItem={renderRecipe}
-              />
+              isEmpty ? (
+                <Text>You don't have any recipes yet. <TouchableOpacity onPress={() => navigation.navigate("Add Recipe")}><Text>Add some</Text></TouchableOpacity></Text>
+              ) : (
+                <FlatList
+                  data={recipes.filter(recipe => recipe.title.toLowerCase().includes(searchPhrase))}
+                  keyExtractor={(item) => item.id}
+                  renderItem={renderRecipe}
+                />
+              )
             )}
           </View>
         </View>
       </View>
-    <Navigation activeTab="Recipe List"/>
+      <Navigation activeTab="Recipe List"/>
     </SafeAreaView>
   )
 }

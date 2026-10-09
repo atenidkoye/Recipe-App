@@ -4,8 +4,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useEffect, useState } from 'react';
 
 // Auth management
+import User from './src/utils/types/user';
 import AuthContext from './src/components/AuthContext';
 import { getUserData } from './src/utils/db';
+import { isTokenValid } from './src/utils/auth';
 
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
@@ -14,8 +16,8 @@ import RecipeList from './src/screens/RecipeList';
 import Account from './src/screens/Account';
 import ShoppingList from './src/screens/ShoppingList';
 import Search from './src/screens/Search';
-import User from './src/utils/types/user';
-import { isTokenValid } from './src/utils/auth';
+import Recipe from './src/screens/Recipe';
+import RecipeEditor from './src/screens/RecipeEditor';
 
 const Stack = createStackNavigator();
 
@@ -59,6 +61,10 @@ const App = () => {
           <Stack.Screen name="Search" component={Search} options={{headerShown: false}} />
           <Stack.Screen name="Shopping List" component={ShoppingList} options={{headerShown: false}} />
           <Stack.Screen name="Account" component={Account} options={{headerShown: false}} />
+
+          {/* Sub screens */}
+          <Stack.Screen name="Recipe" component={Recipe} options={{headerShown: false}} />
+          <Stack.Screen name="Add Recipe" component={RecipeEditor} options={{headerShown: false}} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthContext>
