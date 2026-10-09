@@ -36,11 +36,11 @@ const RecipeList = () => {
     
     if (loadingTimeout.current) clearTimeout(loadingTimeout.current); // Refresh timeout
     if (recipes.length == 0) {
-      // Mark user's recipe list as empty if no recipes show up after 2 (might change) seconds
+      // Mark user's recipe list as empty if no recipes show up after 3 (might change) seconds
       loadingTimeout.current = setTimeout(() => {
         setIsEmpty(true);
         setLoading(false);
-      }, 2000);
+      }, 3000);
     }
   }, [recipes])
 
@@ -86,7 +86,12 @@ const RecipeList = () => {
               <ActivityIndicator size="large" color="#6A569E" style={staticStyles.loader}/>
             ) : (
               isEmpty ? (
-                <Text>You don't have any recipes yet. <TouchableOpacity onPress={() => navigation.navigate("Add Recipe")}><Text>Add some</Text></TouchableOpacity></Text>
+                <View style={[staticStyles.centered, {gap: 10}]}>
+                  <Text style={{fontSize: 16}}>You don't have any recipes yet.</Text> 
+                  <TouchableOpacity onPress={() => navigation.navigate("Add Recipe")}>
+                    <Text style={{fontSize: 16, color: "blue"}}>Add one</Text>
+                  </TouchableOpacity>
+                </View>
               ) : (
                 <FlatList
                   data={recipes.filter(recipe => recipe.title.toLowerCase().includes(searchPhrase))}
@@ -98,6 +103,11 @@ const RecipeList = () => {
           </View>
         </View>
       </View>
+      {isEmpty || loading ? null : (
+        <TouchableOpacity style={{position: "absolute", bottom: 100, right: 20}} onPress={() => navigation.navigate("Add Recipe")}>
+          <Text>Add Recipe</Text>
+        </TouchableOpacity>
+      )}
       <Navigation activeTab="Recipe List"/>
     </SafeAreaView>
   )

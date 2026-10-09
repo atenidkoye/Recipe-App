@@ -27,7 +27,7 @@ export const fetchRecipes = async (userToken, setRecipes) => {
     recipe["ingredients"] = await fetchIngredients(recipe.id);
   });
 
-  setRecipes(data);
+  setTimeout(() => setRecipes(data), 500);
 }
 
 
