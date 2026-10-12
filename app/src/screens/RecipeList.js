@@ -4,14 +4,15 @@ import staticStyles from '../static/styles';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useContext, useEffect, useRef, useState } from "react";
 import authContext from '../components/AuthContext';
-import { fetchRecipes, readRecipes } from "../utils/recipe";
+import { fetchRecipes, fetchUserRecipes, readUserRecipes } from "../utils/recipe";
 import { useNavigation } from "@react-navigation/native";
 import RecipeListItem from '../components/RecipeListItem';
 
-const RecipeList = () => {
+const RecipeList = ({route}) => {
   const navigation = useNavigation();
 
-  const {user} = useContext(authContext);
+  const { user } = useContext(authContext);
+  const { isUserList } = route.params;
 
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,10 +24,14 @@ const RecipeList = () => {
 
   // Get recipe data
   useEffect(() => {
-    if (user.isGuest) { // Guest user -> get data from the local storage
-      readRecipes(setRecipes);
-    } else { // Logged in user -> get data from the server
-      fetchRecipes(user.token, setRecipes);
+    if (!isUserList) {
+      fetchRecipes(setRecipes);
+    } else {
+      if (user.isGuest) { // Guest user -> get data from the local storage
+        readUserRecipes(setRecipes);
+      } else { // Logged in user -> get data from the server
+        fetchUserRecipes(user.token, setRecipes);
+      }
     }
   }, []);
 
@@ -54,7 +59,7 @@ const RecipeList = () => {
   return (
     <SafeAreaView style={staticStyles.safeArea}>
       <View style={staticStyles.container}>
-        <Text style={staticStyles.headerText}>My recipes</Text>
+        <Text style={staticStyles.headerText}>{isUserList ? "My" : "Featured"} recipes</Text>
 
         <View style={staticStyles.searchContainer}>
           <TextInput 
@@ -76,9 +81,9 @@ const RecipeList = () => {
             ) : (
               isEmpty ? (
                 <View style={[staticStyles.centered, {gap: 10}]}>
-                  <Text style={{fontSize: 16}}>You don't have any recipes yet.</Text> 
-                  <TouchableOpacity onPress={() => navigation.navigate("Add Recipe")}>
-                    <Text style={{fontSize: 16, color: "blue"}}>Add one</Text>
+                  <Text style={{fontSize: 16, textAlign: "center"}}>{isUserList ? "You don't have any recipes yet." : "Sorry, something went wrong and we couldn't load public recipes."}</Text> 
+                  <TouchableOpacity onPress={() => navigation.navigate(isUserList ? "Add Recipe" : "Recipe List")}>
+                    <Text style={{fontSize: 16, color: "blue"}}>{isUserList? "Add one" : "Browse your recipes"}</Text>
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -92,7 +97,7 @@ const RecipeList = () => {
           </View>
         </View>
       </View>
-      {isEmpty || loading ? null : (
+      {!isUserList || isEmpty || loading ? null : (
         <TouchableOpacity style={{position: "absolute", bottom: 100, right: 20}} onPress={() => navigation.navigate("Add Recipe")}>
           <Text>Add Recipe</Text>
         </TouchableOpacity>

@@ -1,6 +1,34 @@
 import { Alert } from "react-native";
 
-export const readRecipes = async (setRecipes) => {
+/**
+ * Fetches all public recipes from the server.
+ * In case of an error the message is shown to the user via an alert popup.
+ * 
+ * @param {function} setRecipes Function to set recipes state
+ */
+export const fetchRecipes = async (setRecipes) => {
+
+  // Fetch public recipes
+  const response = await fetch('http://10.0.2.2:4000/api/recipes');
+
+  const data = await response.json();
+
+  // Inform user about error via alert popup
+  if (!response.ok) {
+    Alert.alert("Error", data.message);
+  }
+
+  // Add categories and ingredients to all the recipes
+  data.forEach(async (recipe) => {
+    recipe["categories"] = await fetchCategories(recipe.id);
+    recipe["ingredients"] = await fetchIngredients(recipe.id);
+    recipe["isFavourite"] = false;
+  });
+
+  setTimeout(() => setRecipes(data), 500);
+}
+
+export const readUserRecipes = async (setRecipes) => {
   // TODO: Read recipe data from the local storage (SQLite)
   
   setRecipes([]);
@@ -14,7 +42,7 @@ export const readRecipes = async (setRecipes) => {
  * @param {string} userToken Bearer token of the user used for authorization
  * @param {function} setRecipes Function to set recipes state
  */
-export const fetchRecipes = async (userToken, setRecipes) => {
+export const fetchUserRecipes = async (userToken, setRecipes) => {
 
   // Fetch recipes created by logged in user
   const response = await fetch('http://10.0.2.2:4000/api/recipes/user/me', {
@@ -49,7 +77,7 @@ export const fetchRecipes = async (userToken, setRecipes) => {
  * 
  * @param {string} userToken Bearer token of the user used for authorization
  * @param {object} recipe Recipe object to change the favourite status of
- * @returns {boolean} Changed favourite status of the recipe
+ * @returns {Promise<boolean>} Changed favourite status of the recipe
  */
 export const updateFavourite = async (userToken, recipe) => {
 
@@ -76,7 +104,7 @@ export const updateFavourite = async (userToken, recipe) => {
  * Fetches categories of a recipe on a recipe specific endpoint
  * 
  * @param {number} id ID of the recipe 
- * @returns Array of categories
+ * @returns {Promise<Array>} Array of categories
  */
 const fetchCategories = async (id) => {
   const response = await fetch(`http://10.0.2.2:4000/api/recipes/${id}/categories`);
@@ -87,7 +115,7 @@ const fetchCategories = async (id) => {
  * Fetches ingredients of a recipe on a recipe specific endpoint
  * 
  * @param {number} id ID of the recipe 
- * @returns Array of ingredients
+ * @returns {Promise<Array>} Array of ingredients
  */
 const fetchIngredients = async (id) => {
   const response = await fetch(`http://10.0.2.2:4000/api/ingredients/recipe/${id}`);
@@ -99,7 +127,7 @@ const fetchIngredients = async (id) => {
  * 
  * @param {number} id ID of the recipe
  * @param {string} userToken Bearer token of the user used for authorization
- * @returns {boolean} Favourite status of the recipe
+ * @returns {Promise<boolean>} Favourite status of the recipe
  */
 const isRecipeFavourited = async (id, userToken) => {
   const response = await fetch(`http://10.0.2.2:4000/api/favourites/${id}`, {
