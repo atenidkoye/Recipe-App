@@ -64,7 +64,8 @@ const App = () => {
 
           {/* Sub screens */}
           <Stack.Screen name="Recipe" component={Recipe} options={{headerShown: false}} />
-          <Stack.Screen name="Add Recipe" component={RecipeEditor} options={{headerShown: false}} />
+          <Stack.Screen name="Add Recipe" component={RecipeEditor} options={{headerShown: false}} initialParams={{recipe: null}} />
+          <Stack.Screen name="Edit Recipe" component={RecipeEditor} options={{headerShown: false}} initialParams={{recipe: null}}/>
         </Stack.Navigator>
       </NavigationContainer>
     </AuthContext>

@@ -114,6 +114,15 @@ const staticStyles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
     },
+    recipeBackground: {
+        position: "absolute", 
+        left: 0, 
+        top: 0, 
+        height: "90%", 
+        width: "100%", 
+        borderRadius: 10,
+        alignItems: "center"
+    },
     recipeCard: {
         flexDirection: 'row',
         backgroundColor: '#E7DDF7',

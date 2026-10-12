@@ -6,6 +6,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import authContext from '../components/AuthContext';
 import { fetchRecipes, readRecipes } from "../utils/recipe";
 import { useNavigation } from "@react-navigation/native";
+import RecipeListItem from '../components/RecipeListItem';
 
 const RecipeList = () => {
   const navigation = useNavigation();
@@ -19,7 +20,6 @@ const RecipeList = () => {
 
   let searchTimeout = useRef(null);
   let loadingTimeout = useRef(null);
-
 
   // Get recipe data
   useEffect(() => {
@@ -49,18 +49,7 @@ const RecipeList = () => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     searchTimeout.current = setTimeout(() => setSearchPhrase(phrase), 1500);
   }
-
-  // One recipe componenent on the list
-  const renderRecipe = ({item}) => (
-    <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: item})}>
-
-      <View style={staticStyles.recipeTextContainer}>
-        <Text style={staticStyles.category}>{item.categories.map(category => category.name + " ")}</Text>
-        <Text style={staticStyles.name}>{item.title}</Text>
-        <Text style={staticStyles.description}>{item.description}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  
 
   return (
     <SafeAreaView style={staticStyles.safeArea}>
@@ -96,7 +85,7 @@ const RecipeList = () => {
                 <FlatList
                   data={recipes.filter(recipe => recipe.title.toLowerCase().includes(searchPhrase))}
                   keyExtractor={(item) => item.id}
-                  renderItem={renderRecipe}
+                  renderItem={(item) => <RecipeListItem item={item.item} />}
                 />
               )
             )}

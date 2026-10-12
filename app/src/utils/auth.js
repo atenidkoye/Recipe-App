@@ -95,6 +95,8 @@ export const logout = async (setUser) => {
 export const isTokenValid = async (token) => {
   const response = await fetch("http://10.0.2.2:4000/api/auth/validation", {
     method: "GET",
+    withCredentials: true,
+    credentials: 'include',
     headers: {
       "authorization": `Bearer ${token}`
     },
