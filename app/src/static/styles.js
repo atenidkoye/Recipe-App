@@ -22,7 +22,7 @@ const staticStyles = StyleSheet.create({
         fontSize: 26,
         fontWeight: '600',
         color: '#554A6B',
-        marginBottom: 30,
+        marginBottom: 15,
         marginLeft: 10,
     },
     form: {
@@ -90,9 +90,9 @@ const staticStyles = StyleSheet.create({
         marginHorizontal: 10,
         borderRadius: 25,
         paddingHorizontal: 20,
-        paddingVertical: 12,
+        paddingVertical: 5,
         alignItems: 'center',
-        marginBottom: 25,
+        marginBottom: 10,
     },
     searchInput: {
         flex: 1,
@@ -108,10 +108,20 @@ const staticStyles = StyleSheet.create({
     },
     listContainer: {
         flex: 1,
+        marginBottom: 50,
     },
     loader: {
         flex: 1,
         justifyContent: 'center',
+    },
+    recipeBackground: {
+        position: "absolute", 
+        left: 0, 
+        top: 0, 
+        height: "90%", 
+        width: "100%", 
+        borderRadius: 10,
+        alignItems: "center"
     },
     recipeCard: {
         flexDirection: 'row',
