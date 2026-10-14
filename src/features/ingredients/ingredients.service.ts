@@ -1,9 +1,10 @@
-
 import { ingredientsRepository } from "./ingredients.repository.js";
 import { recipesRepository } from "../recipes/recipes.repository.js";
 import type { CreateIngredientInput } from "./ingredients.types.js";
 
+// Handles business logic for managing recipe ingredients.
 export const ingredientsService = {
+  // Creates an ingredient after validating the input and checking recipe ownership.
   create(
     userId: number,
     recipeId: number,
@@ -29,10 +30,12 @@ export const ingredientsService = {
     });
   },
 
+  // Retrieves all ingredients associated with a specific recipe.
   getByRecipeId(recipeId: number) {
     return ingredientsRepository.findByRecipeId(recipeId);
   },
 
+  // Deletes an ingredient after verifying that the user owns its recipe.
   delete(userId: number, ingredientId: number) {
     const ingredient = ingredientsRepository.findById(ingredientId);
 

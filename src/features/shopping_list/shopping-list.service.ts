@@ -1,16 +1,18 @@
-
 import { shoppingListRepository } from "./shopping-list.repository.js";
 import type {
   CreateShoppingListItemInput,
   UpdateShoppingListItemInput,
 } from "./shopping-list.types.js";
 
+// Handles business logic and validation for shopping list operations.
 export const shoppingListService = {
+  // Retrieves the user's shopping list items, creating a list if needed.
   getItems(userId: number) {
     const list = shoppingListRepository.getOrCreateList(userId);
     return shoppingListRepository.getItems(list.id);
   },
 
+  // Validates and adds a new item to the user's shopping list.
   addItem(userId: number, input: CreateShoppingListItemInput) {
     const name = input.name?.trim();
 
@@ -34,6 +36,7 @@ export const shoppingListService = {
     });
   },
 
+  // Validates an update and ensures the item belongs to the user's list.
   updateItem(
     userId: number,
     itemId: number,
@@ -73,6 +76,7 @@ export const shoppingListService = {
     });
   },
 
+  // Deletes an item only if it belongs to the user's shopping list.
   deleteItem(userId: number, itemId: number) {
     const list = shoppingListRepository.getOrCreateList(userId);
     const item = shoppingListRepository.getItemById(itemId);

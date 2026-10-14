@@ -1,3 +1,5 @@
+
+// Represents a recipe as stored in the database.
 export interface Recipe {
   id: number;
   user_id: number;
@@ -11,6 +13,8 @@ export interface Recipe {
   updated_at: string;
 }
 
+// Defines the data required when creating a new recipe.
+// Fields marked with ? are optional.
 export interface CreateRecipeInput {
   title: string;
   description?: string;
@@ -20,6 +24,8 @@ export interface CreateRecipeInput {
   is_public?: number;
 }
 
+// Defines the fields that can be updated on an existing recipe.
+// All fields are optional to allow partial updates.
 export interface UpdateRecipeInput {
   title?: string;
   description?: string;

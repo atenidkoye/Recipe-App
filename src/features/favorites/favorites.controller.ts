@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../../middleware/authMiddleware.js";
 import { favouritesService } from "./favorite.service.js";
 
+// Adds a recipe to the authenticated user's favourites.
 export const addFavourite = (
   req: AuthRequest,
   res: Response
@@ -24,6 +25,7 @@ export const addFavourite = (
   }
 };
 
+// Removes a recipe from the authenticated user's favourites.
 export const removeFavourite = (
   req: AuthRequest,
   res: Response
@@ -46,6 +48,7 @@ export const removeFavourite = (
   }
 };
 
+// Retrieves all favourite recipes belonging to the authenticated user.
 export const getMyFavourites = (
   req: AuthRequest,
   res: Response
@@ -64,6 +67,7 @@ export const getMyFavourites = (
   }
 };
 
+// Checks whether a recipe is in the authenticated user's favourites.
 export const checkFavourite = (
   req: AuthRequest,
   res: Response

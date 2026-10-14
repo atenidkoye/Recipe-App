@@ -1,3 +1,5 @@
+
+// Represents an ingredient stored in the database.
 export interface Ingredient {
   id: number;
   recipe_id: number;
@@ -6,6 +8,8 @@ export interface Ingredient {
   unit: string | null;
 }
 
+// Defines the data required to create a new ingredient.
+// Quantity and unit are optional.
 export interface CreateIngredientInput {
   name: string;
   quantity?: number;

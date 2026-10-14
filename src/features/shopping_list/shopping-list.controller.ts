@@ -1,9 +1,10 @@
-
 import type { Request, Response } from "express";
 import { shoppingListService } from "./shopping-list.service.js";
 import type { AuthRequest } from "../../middleware/authMiddleware.js";
 
+// Handles HTTP requests for the user's shopping list.
 export const shoppingListController = {
+  // Retrieves all shopping list items belonging to the authenticated user.
   getItems(req: Request, res: Response) {
     try {
       const userId = (req as AuthRequest).userId!;
@@ -19,6 +20,7 @@ export const shoppingListController = {
     }
   },
 
+  // Adds a new item to the authenticated user's shopping list.
   addItem(req: Request, res: Response) {
     try {
       const userId = (req as AuthRequest).userId!;
@@ -45,6 +47,7 @@ export const shoppingListController = {
     }
   },
 
+  // Updates a shopping list item after validating its ID.
   updateItem(req: Request, res: Response) {
     try {
       const userId = (req as AuthRequest).userId!;
@@ -83,6 +86,7 @@ export const shoppingListController = {
     }
   },
 
+  // Deletes a shopping list item after validating its ID.
   deleteItem(req: Request, res: Response) {
     try {
       const userId = (req as AuthRequest).userId!;
