@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../../middleware/authMiddleware.js";
 import { ingredientsService } from "./ingredients.service.js";
 
+// Creates an ingredient for a recipe owned by the authenticated user.
 export const createIngredient = (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
     const ingredient = ingredientsService.create(
+      req.userId!,
       Number(req.params.recipeId),
       req.body
     );
@@ -21,6 +24,7 @@ export const createIngredient = (
   }
 };
 
+// Retrieves all ingredients belonging to a specific recipe.
 export const getIngredients = (
   req: Request,
   res: Response
@@ -39,12 +43,14 @@ export const getIngredients = (
   }
 };
 
+// Deletes an ingredient after verifying the user's ownership of its recipe.
 export const deleteIngredient = (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
     ingredientsService.delete(
+      req.userId!,
       Number(req.params.id)
     );
 

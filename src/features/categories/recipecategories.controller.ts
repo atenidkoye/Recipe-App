@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { recipeCategoriesService } from "./recipeCategories.service.js";
 
+// Adds a category to a recipe using their respective IDs.
 export const addCategoryToRecipe = (
   req: Request,
   res: Response
@@ -23,6 +24,7 @@ export const addCategoryToRecipe = (
   }
 };
 
+// Retrieves all categories associated with a specific recipe.
 export const getRecipeCategories = (
   req: Request,
   res: Response
@@ -43,6 +45,7 @@ export const getRecipeCategories = (
   }
 };
 
+// Removes a category association from a recipe.
 export const removeCategoryFromRecipe = (
   req: Request,
   res: Response

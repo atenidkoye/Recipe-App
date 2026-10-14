@@ -1,6 +1,8 @@
+
 import { Request, Response } from "express";
 import { categoriesService } from "./categories.service.js";
 
+// Retrieves all available recipe categories.
 export const getCategories = (
   _req: Request,
   res: Response
@@ -16,6 +18,7 @@ export const getCategories = (
   }
 };
 
+// Retrieves a single category using its ID.
 export const getCategory = (
   req: Request,
   res: Response
@@ -35,6 +38,7 @@ export const getCategory = (
   }
 };
 
+// Creates a new category using the name provided in the request body.
 export const createCategory = (
   req: Request,
   res: Response
