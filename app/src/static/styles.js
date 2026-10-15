@@ -149,6 +149,89 @@ const staticStyles = StyleSheet.create({
         fontSize: 12
     },
     // recipe list screen ends
+    // shopping list screen
+    shoppingContainer: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
+    listsContainer: {
+        flex: 1
+    },
+    listItem: {
+        width: '100%',
+        padding: 15,
+        backgroundColor: '#E7DDF7',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'white'
+    },
+    listForm: {
+        backgroundColor: '#E7DDF7',
+        padding: 15,
+        marginHorizontal: 15,
+        marginBottom: 50,
+        borderRadius: 10,
+        maxHeight: 350,
+    },
+    shopScroll: {
+        maxHeight: 180,
+        marginBottom: 10,
+    },
+    shopInput: {
+        backgroundColor: 'white',
+        borderColor: 'white',
+        borderWidth: 1,
+        borderRadius: 5,
+        height: 45,
+        marginBottom: 10,
+        paddingHorizontal: 15,
+    },
+    addMore: {
+        alignItems: 'center',
+        paddingVertical: 10,
+        marginBottom: 5,
+    },
+    addMoreText: {
+        fontWeight: '600',
+        color: '#6A569E',
+    },
+    addButton: {
+        alignItems: 'center',
+        backgroundColor: '#6A569E',
+        height: 45,
+        borderRadius: 5,
+        marginTop: 5,
+        justifyContent: 'center',
+    },
+    addButtonText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    listTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10,
+    },
+    itemRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 20,
+        marginBottom: 10,
+    },
+    checkbox: {
+        marginRight: 12,
+    },
+    itemText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    itemTextChecked: {
+        textDecorationLine: 'line-through',
+        color: '#999',
+    },
+    // shopping list screen ends
 });
 
 export default staticStyles;

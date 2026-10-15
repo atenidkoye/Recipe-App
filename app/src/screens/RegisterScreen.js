@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Button, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import staticStyles from "../static/styles";
 import { useState, useContext } from "react";
 import AuthContext from "../components/AuthContext";
 import { register } from "../utils/auth";
+import TextButton from "../components/TextButton";
 
 const RegisterScreen = () => {
 	const navigation = useNavigation();
@@ -43,13 +44,8 @@ const RegisterScreen = () => {
             onChangeText={setPassword}
           />
 
-          <TouchableOpacity style={staticStyles.fullButton} onPress={() => register(name, email, password, setUser)}>
-            <Text style={staticStyles.buttonText}>Register</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[staticStyles.fullButton, {marginTop: 20}]} onPress={() => navigation.navigate("Login")}>
-            <Text style={staticStyles.buttonText}>I already have an account</Text>
-          </TouchableOpacity>
+          <TextButton style={staticStyles.fullButton} buttonText="Register" onPress={() => register(name, email, password, setUser)}/>
+          <TextButton style={[staticStyles.fullButton, {marginTop: 20}]} buttonText="I already have an account" onPress={() => navigation.navigate("Login")}/>
         
         </View>
       </View>
