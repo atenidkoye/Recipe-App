@@ -148,12 +148,12 @@ const staticStyles = StyleSheet.create({
         flex: 1
     },
     listItem: {
-        borderBottomColor: '#6A569E',
-        borderBottomWidth: 1,
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        justifyContent: 'center',
-        paddingTop: 20,
+        width: '100%',
+        padding: 15,
+        backgroundColor: '#E7DDF7',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'white'
     },
     listForm: {
         backgroundColor: '#E7DDF7',
@@ -185,14 +185,6 @@ const staticStyles = StyleSheet.create({
         fontWeight: '600',
         color: '#6A569E',
     },
-    item: {
-        borderColor: '#555',
-        borderWidth: 2,
-        height: 50,
-        marginBottom: 15,
-        marginLeft: 50,
-        padding: 15,
-    },
     addButton: {
         alignItems: 'center',
         backgroundColor: '#6A569E',
@@ -205,6 +197,29 @@ const staticStyles = StyleSheet.create({
         color: '#FFF',
         fontSize: 16,
         fontWeight: '600',
+    },
+    listTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10,
+    },
+    itemRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 20,
+        marginBottom: 10,
+    },
+    checkbox: {
+        marginRight: 12,
+    },
+    itemText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    itemTextChecked: {
+        textDecorationLine: 'line-through',
+        color: '#999',
     },
     // shopping list screen ends
 });

@@ -52,10 +52,6 @@ const RecipeList = () => {
   );
 
   return (
-    // <View style={staticStyles.centered}>
-    //   <Text>Recipe List</Text>
-    //   <Navigation />
-    // </View>
     <SafeAreaView style={staticStyles.safeArea}>
       <View style={staticStyles.container}>
         <Text style={staticStyles.headerText}>Recipe Screen</Text>

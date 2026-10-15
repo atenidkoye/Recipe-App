@@ -3,14 +3,38 @@ import Navigation from "../components/Navigation";
 import staticStyles from "../static/styles";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// TODO: delete by swipe
+import Checkbox from 'expo-checkbox';
+import ShoppingListRow from "../components/ShoppingListRow";
 
 const ShoppingList = () => {
   const [lists, setLists] = useState([]);
   const [listName, setListName] = useState('');
   const [items, setItems] = useState(['']);
   const [id, setId] = useState(1);
+
+  const deleteList = (deleteId) => {
+    setLists(lists => lists.filter(list => list.id !== deleteId));
+  }
+
+  const editListTitle = (listId, title) => {
+    setLists(lists.map(list => {
+      if (list.id === listId) {
+        return {...list, name: title};
+      }
+      return list;
+    }));
+  }
+
+  const editListItem = (listId, itemIndex, text) => {
+    setLists(lists.map(list => {
+      if (list.id === listId) {
+        const updatedItems = [...list.items];
+        updatedItems[itemIndex] = {...updatedItems[itemIndex], text: text};
+        return {...list, items: updatedItems};
+      }
+      return list;
+    }))
+  }
 
   const handleItemChange = (text, index) => {
     const newItems = [...items];
@@ -37,7 +61,7 @@ const ShoppingList = () => {
     const newList = {
       id: id,
       name: listName,
-      items: validItems
+      items: validItems.map(item => ({text: item, checked: false}))
     }
 
     setLists([newList, ...lists]);
@@ -45,6 +69,20 @@ const ShoppingList = () => {
     setListName('');
     setItems(['']);
     setId(id => id + 1);
+  }
+
+  const toggleItem = (listId, itemIndex) => {
+    setLists(lists.map(list => {
+      if (list.id === listId) {
+        const updatedItems = [...list.items];
+        updatedItems[itemIndex] = {
+          ...updatedItems[itemIndex],
+          checked: !updatedItems[itemIndex].checked
+        }
+        return {...list, items: updatedItems};
+      }
+      return list;
+    }));
   }
   return (
     <SafeAreaView style={staticStyles.safeArea}>
@@ -54,9 +92,7 @@ const ShoppingList = () => {
         data={lists}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
-          <View style={staticStyles.listItem}>
-            <Text>{item.name}: {item.items.join(', ')}</Text>
-          </View>
+          <ShoppingListRow list={item} onDelete={deleteList} toggleItem={toggleItem} onEditItem={editListItem} onEditTitle={editListTitle}/>
         )}
         />
         <View style={staticStyles.listForm}>
@@ -72,7 +108,7 @@ const ShoppingList = () => {
               <TextInput
               key={index}
               style={staticStyles.shopInput}
-              placeholder={`Element #${index + 1}`}
+              placeholder={`Item #${index + 1}`}
               value={item}
               onChangeText={(text) => handleItemChange(text, index)}
               />
