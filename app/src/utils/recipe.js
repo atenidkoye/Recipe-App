@@ -135,6 +135,173 @@ const isRecipeFavourited = async (id, userToken) => {
       "authorization": `Bearer ${userToken}`
     }
   });
+
   const data = await response.json();
   return data.isFavourite;
+}
+
+export const addRecipe = async (recipe, categories, ingredients, userToken) => {
+  const response = await fetch('http://10.0.2.2:4000/api/recipes', {
+    method: "POST",
+    withCredentials: true,
+    credentials: 'include',
+    headers: {
+      "authorization": `Bearer ${userToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(recipe)
+  });
+
+  const body = await response.json();
+
+  if (!response.ok) {
+    Alert.alert("Erorr", body.message);
+    return false;
+  }
+  
+  let error = await addCategories(body, categories, userToken);
+  if (error) {
+    Alert.alert("Erorr", error);
+    return false;
+  }
+
+  error = await addIngredients(body, ingredients, userToken);
+  if (error) {
+    Alert.alert("Erorr", error);
+    return false;
+  }
+
+  return true;
+}
+
+export const editRecipe = async (oldRecipe, recipe, ingredients, categories, userToken) => {
+  const response = await fetch(`http://10.0.2.2:4000/api/recipes/${recipe.id}`, {
+    method: "PUT",
+    withCredentials: true,
+    credentials: 'include',
+    headers: {
+      "authorization": `Bearer ${userToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(recipe)
+  });
+
+  if (!response.ok) {
+    Alert.alert("Erorr", (await response.json()).message);
+    return false;
+  }
+
+  let error = await editCategories(oldRecipe, categories, userToken);
+  if (error) {
+    Alert.alert("Erorr", error);
+    return false;
+  }
+
+  error = await editIngredients(oldRecipe, ingredients, userToken);
+  if (error) {
+    Alert.alert("Erorr", error);
+    return false;
+  }
+
+  return true;
+}
+
+const editCategories = async (oldRecipe, categories, userToken) => {
+
+  let response;
+
+  // Rmove old categories
+  for (let index in oldRecipe.categories) {
+    let category = oldRecipe.categories[index];
+
+    response = await fetch(`http://10.0.2.2:4000/api/recipes/${oldRecipe.id}/categories/${category.id}`, {
+      method: "DELETE",
+      withCredentials: true,
+      credentials: 'include',
+      headers: {
+        "authorization": `Bearer ${userToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      return (await response.json()).message;
+    }
+  }
+
+  // Add new categories
+  return await addCategories(oldRecipe, categories, userToken);
+}
+
+const addCategories = async (recipe, categories, userToken) => {
+
+  let response;
+
+  for (let index in categories) {
+    let category = categories[index];
+
+    response = await fetch(`http://10.0.2.2:4000/api/recipes/${recipe.id}/categories/${category.id}`, {
+      method: "POST",
+      withCredentials: true,
+      credentials: 'include',
+      headers: {
+        "authorization": `Bearer ${userToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      return (await response.json()).message;
+    }
+  }
+
+  return "";
+}
+
+const editIngredients = async (oldRecipe, ingredients, userToken) => {
+  
+  let response;
+
+  // Remove old ingredients
+  for (let index in oldRecipe.ingredients) {
+    let ingredient = oldRecipe.ingredients[index];
+    response = await fetch(`http://10.0.2.2:4000/api/ingredients/${ingredient.id}`, {
+      method: "DELETE",
+      withCredentials: true,
+      credentials: 'include',
+      headers: {
+        "authorization": `Bearer ${userToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      return (await response.json()).message;
+    }
+  }
+
+  return await addIngredients(oldRecipe, ingredients, userToken);
+}
+
+const addIngredients = async (recipe, ingredients, userToken) => {
+  
+  let response;
+  
+  // Add ingredients
+  for (let index in ingredients) {
+    let ingredient = ingredients[index];
+    response = await fetch(`http://10.0.2.2:4000/api/ingredients/recipe/${recipe.id}`, {
+      method: "POST",
+      withCredentials: true,
+      credentials: 'include',
+      headers: {
+        "authorization": `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(ingredient)
+    });
+
+    if (!response.ok) {
+      return (await response.json()).message;
+    }
+  }
+
+  return "";
 }
