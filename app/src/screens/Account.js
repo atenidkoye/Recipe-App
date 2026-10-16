@@ -4,15 +4,25 @@ import staticStyles from "../static/styles";
 import { useContext } from "react";
 import AuthContext from "../components/AuthContext";
 import { logout } from "../utils/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TextButton from "../components/TextButton";
 
 const Account = () => {
   const {user, setUser} = useContext(AuthContext);
   return (
-    <View style={staticStyles.centered}>
-      <Text>{user ? user.name : ""}</Text>
-      <Button title="Log out" onPress={() => logout(setUser)}/>
-      <Navigation activeTab="Account"/>
-    </View>
+    <SafeAreaView style={staticStyles.safeArea}>
+      <View style={staticStyles.container}>
+        <Text style={staticStyles.headerText}>Account</Text>
+          <View style={staticStyles.recipeCard}>
+            <View style={staticStyles.recipeTextContainer}>
+              <Text style={[staticStyles.name && {textAlign: 'center', fontSize: 25}]}>{user ? user.name : ''}</Text>
+              <Text style={[staticStyles.description && {textAlign: 'center', paddingBottom: 20}]}>{user ? user.email : ''}</Text>
+              <TextButton style={staticStyles.fullButton} buttonText="Log out" onPress={() => logout(setUser)}/>
+            </View>
+          </View>
+      </View>
+      <Navigation />
+    </SafeAreaView>
   )
 }
 
