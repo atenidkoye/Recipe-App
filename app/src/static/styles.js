@@ -30,6 +30,10 @@ const staticStyles = StyleSheet.create({
         backgroundColor: "#D63A3A",
     },
 
+    activeIndicator: {
+        backgroundColor: "#6A569EC0"
+    },  
+
     // login/register screen
     safeArea: {
         flex: 1,
