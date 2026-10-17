@@ -9,16 +9,25 @@ import IconButton from "../components/IconButton";
 import img from "../static/img";
 import TimeModal from "../components/TimeModal";
 import CategoryModal from "../components/CategoryModal";
-import { addRecipe, editRecipe } from "../utils/recipe";
+import { addRecipe, editRecipe } from "../utils/backendConn";
 import authContext from '../components/AuthContext';
+import { Recipe } from "../utils/types/recipe";
 
 const RecipeEditor = ({route}) => {
   const navigation = useNavigation();
 
   const { user } = useContext(authContext);
 
-  const { recipe } = route.params;
-  const editing = Boolean(recipe);
+  const recipeParam = route.params.recipe;
+  const editing = Boolean(recipeParam);
+
+  let recipe;
+  if (editing) {
+    recipe = new Recipe({...recipeParam});
+    recipe.categories = recipeParam.categories;
+    recipe.ingredients = recipeParam.ingredients;
+    recipe.isFavourite = recipeParam.isFavourite;
+  }
 
   const [timeModalActive, setTimeModalActive] = useState(false);
   const [categoryModalActive, setCategoryModalActive] = useState(false);
@@ -62,10 +71,17 @@ const RecipeEditor = ({route}) => {
     setInstructions(instructions.filter((_, i) => index != i))
   }
   
+  const deleteRecipe = async () => {
+    let success = await recipe.delete.data(user.token);
+    if (success) {
+      navigation.navigate("Recipe List");
+    }
+  }
+
   const saveRecipe = async () => {
     let success;
     
-    let newRecipe = {
+    let newRecipe = new Recipe({
       id: editing ? recipe.id : null,
       title: title,
       description: desc,
@@ -73,12 +89,15 @@ const RecipeEditor = ({route}) => {
       cooking_time: cookingTime,
       servings: servings,
       is_public: Number(isPublic)
-    }
+    });
+
+    newRecipe.categories = categories;
+    newRecipe.ingredients = ingredients;
 
     if (editing) {
-      success = await editRecipe(recipe, newRecipe, ingredients, categories, user.token);
+      success = await recipe.edit.data(user.token, newRecipe);
     } else {
-      success = await addRecipe(newRecipe, categories, ingredients, user.token);
+      success = await newRecipe.add.data(user.token);
     }
 
     if (success) {
@@ -210,6 +229,7 @@ const RecipeEditor = ({route}) => {
         </ScrollView>
       </View>
       <View style={staticStyles.editorButtons}>
+        { editing ? <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} /> : null }
         <TextButton style={[staticStyles.editorButton, staticStyles.cancelButton]} buttonText="Cancel" onPress={() => navigation.goBack()} />
         <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton]} buttonText="Save" onPress={saveRecipe} />
       </View>

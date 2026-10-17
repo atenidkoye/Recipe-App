@@ -171,6 +171,15 @@ const staticStyles = StyleSheet.create({
     description: {
         fontSize: 12
     },
+    listAddButton: {
+        position: "absolute",
+        bottom: 100,
+        right: 20,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        backgroundColor: "#6A569E",
+    },  
     // recipe list screen ends
     // shopping list screen
     shoppingContainer: {
@@ -263,7 +272,7 @@ const staticStyles = StyleSheet.create({
     },
 
     editorButton: {
-        width: "45%",
+        width: "40%",
         borderRadius: 10,
         paddingVertical: 10
     },

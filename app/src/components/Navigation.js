@@ -7,20 +7,15 @@ const Navigation = ({activeTab}) => {
 
   return (
     <View style={[staticStyles.centered, styles.container]}>
-      {/* <Button title="Discover" onPress={() => navigation.navigate("Featured List")}/>
-      <Button title="Search" onPress={() => navigation.navigate("Search")} />
-      <Button title="List" onPress={() => navigation.navigate("Recipe List")}/>
-      <Button title="Shopping" onPress={() => navigation.navigate("Shopping List")}/>
-      <Button title="Account" onPress={() => navigation.navigate("Account")}/> */}
 
       <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Featured List")}>
         <Text style={staticStyles.navText && staticStyles.activeNavText}>Discover</Text>
         {activeTab === "Recipe List" && <View style={staticStyles.activeIndicator}></View>}
       </TouchableOpacity>
 
-      <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Search")}>
-        <Text style={staticStyles.navText && staticStyles.activeNavText}>Search</Text>
-        {activeTab === "Search" && <View style={staticStyles.activeIndicator}></View>}
+      <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Add Recipe")}>
+        <Text style={staticStyles.navText && staticStyles.activeNavText}>Add Recipe</Text>
+        {activeTab === "Add Recipe" && <View style={staticStyles.activeIndicator}></View>}
       </TouchableOpacity>
 
       <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Recipe List")}>

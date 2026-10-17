@@ -3,7 +3,7 @@ import staticStyles from "../static/styles";
 import TextButton from "./TextButton";
 import { act, useEffect, useRef, useState } from "react";
 import CategoryHolder from "./CategoryHolder";
-import { getCategories } from "../utils/categories";
+import { fetchCategories } from "../utils/backendConn";
 
 const CategoryModal = ({active, setActive, activeCategories, setActiveCategories}) => {
 
@@ -13,7 +13,7 @@ const CategoryModal = ({active, setActive, activeCategories, setActiveCategories
   
   useEffect(() => {
     async function fetch() {
-      setCategories((await getCategories()).filter(category => activeCategories.every(c => c.name != category.name)
+      setCategories((await fetchCategories()).filter(category => activeCategories.every(c => c.name != category.name)
       ));
     }
 

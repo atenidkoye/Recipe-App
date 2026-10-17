@@ -4,9 +4,11 @@ import staticStyles from '../static/styles';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useContext, useEffect, useRef, useState } from "react";
 import authContext from '../components/AuthContext';
-import { fetchRecipes, fetchUserRecipes, readUserRecipes } from "../utils/recipe";
+import { fetchRecipes, fetchUserRecipes } from "../utils/backendConn";
+import { readUserRecipes } from '../utils/localDBConn';
 import { useNavigation } from "@react-navigation/native";
 import RecipeListItem from '../components/RecipeListItem';
+import TextButton from "../components/TextButton";
 
 const RecipeList = ({route}) => {
   const navigation = useNavigation();
@@ -98,9 +100,12 @@ const RecipeList = ({route}) => {
         </View>
       </View>
       {!isUserList || isEmpty || loading ? null : (
-        <TouchableOpacity style={{position: "absolute", bottom: 100, right: 20}} onPress={() => navigation.navigate("Add Recipe")}>
-          <Text>Add Recipe</Text>
-        </TouchableOpacity>
+        <TextButton 
+          style={staticStyles.listAddButton} 
+          onPress={() => navigation.navigate("Add Recipe")} 
+          buttonText="Add Recipe"
+          textStyle={{fontSize: 16}}
+        />
       )}
       <Navigation activeTab="Recipe List"/>
     </SafeAreaView>
