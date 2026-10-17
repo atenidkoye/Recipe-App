@@ -73,10 +73,11 @@ export class Recipe {
         
             const data = await response.json();
 
-            if (!response.ok) {
-                Alert.alert("Error", body.message);
-                return;
-            }
+            // had to turn off due to infinite error
+            // if (!response.ok) {
+            //     Alert.alert("Error", data.message); // changed from body.message due to error
+            //     return;
+            // }
 
             this.isFavourite = data.isFavourite;
         }
