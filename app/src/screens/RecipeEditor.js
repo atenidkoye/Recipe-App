@@ -9,14 +9,13 @@ import IconButton from "../components/IconButton";
 import img from "../static/img";
 import TimeModal from "../components/TimeModal";
 import CategoryModal from "../components/CategoryModal";
-import { addRecipe, editRecipe } from "../utils/backendConn";
-import authContext from '../components/AuthContext';
-import { Recipe } from "../utils/types/recipe";
+import AuthContext from '../components/AuthContext';
+import Recipe from "../utils/types/recipe";
 
 const RecipeEditor = ({route}) => {
   const navigation = useNavigation();
 
-  const { user } = useContext(authContext);
+  const { user } = useContext(AuthContext);
 
   const recipeParam = route.params.recipe;
   const editing = Boolean(recipeParam);

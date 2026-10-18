@@ -4,11 +4,36 @@ import staticStyles from "../static/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import {minutesToHoursAndMinutes} from '../utils/convertor';
+import { useNavigation } from "@react-navigation/native";
+import TextButton from '../components/TextButton';
+import IconButton from "../components/IconButton";
+import img from "../static/img";
+import RecipeType from "../utils/types/recipe";
+import AuthContext from "../components/AuthContext";
+import { useContext } from "react";
 
 const Recipe = ({route}) => {
 
-  const recipe = route.params.recipe;
+  const navigation = useNavigation();
+  const { user } = useContext(AuthContext);
+
+  const recipeParam = route.params.recipe;
+  let recipe;
+  recipe = new RecipeType({...recipeParam});
+  recipe.categories = recipeParam.categories;
+  recipe.ingredients = recipeParam.ingredients;
+  recipe.isFavourite = recipeParam.isFavourite;
+    
+
   const instructionsList = recipe.instructions ? recipe.instructions.split("\n") : [];
+
+  const deleteRecipe = async () => {
+    let success = await recipe.delete.data(user.token);
+    if (success) {
+      navigation.navigate("Recipe List");
+    }
+  }
+
   return (
     <SafeAreaView style={staticStyles.safeArea}>
       <View style={staticStyles.container}>
@@ -16,7 +41,7 @@ const Recipe = ({route}) => {
         <ScrollView
         style={staticStyles.editorForm}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 100}}
+        contentContainerStyle={{paddingBottom: 40}}
         >
         <View style={staticStyles.editorFormPart}>
           <Text style={staticStyles.editorMainLabel}>About</Text>
@@ -78,9 +103,14 @@ const Recipe = ({route}) => {
             <Text style={styles.emptyText}>No instructions added</Text>
           )}
         </View>
-
+        <View style={[staticStyles.editorButtons, {marginTop: 10}]}>
+          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: "60%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
+          <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} />
+          <IconButton style={{backgroundColor: "#FF8000"}} icon={img.edit} iconStyle={{filter: [{invert: 0.9}]}} onPress={() => navigation.navigate("Edit Recipe", {recipe: recipe.getData()})} />
+        </View>
         </ScrollView>
       </View>
+      
       <Navigation />
     </SafeAreaView>
   )

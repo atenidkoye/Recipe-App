@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
 
-export class Recipe {
+class Recipe {
     id;
     title;
     description;
@@ -346,3 +346,5 @@ export class Recipe {
         }
     }
 }
+
+export default Recipe;

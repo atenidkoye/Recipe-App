@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { Recipe } from "./types/recipe";
+import Recipe from "./types/recipe";
 
 /**
  * Fetches all public recipes from the server.

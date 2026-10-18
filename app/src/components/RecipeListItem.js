@@ -3,7 +3,7 @@ import { useContext, useMemo, useRef, useState } from 'react';
 import { Animated, PanResponder, TouchableOpacity, View, Text, Image } from 'react-native';
 import staticStyles from '../static/styles';
 import AuthContext from './AuthContext';
-import { Recipe } from '../utils/types/recipe';
+import Recipe from '../utils/types/recipe';
 
 const RecipeListItem = ({item}) => {
   const navigation = useNavigation();
