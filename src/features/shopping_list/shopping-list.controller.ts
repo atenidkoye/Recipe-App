@@ -1,119 +1,93 @@
-import type { Request, Response } from "express";
+
+import type { Response } from "express";
 import { shoppingListService } from "./shopping-list.service.js";
 import type { AuthRequest } from "../../middleware/authMiddleware.js";
+import { HTTP_STATUS } from "../../utils/http-status.js";
+import { AppError } from "../../utils/app-error.js";
 
 // Handles HTTP requests for the user's shopping list.
 export const shoppingListController = {
   // Retrieves all shopping list items belonging to the authenticated user.
-  getItems(req: Request, res: Response) {
-    try {
-      const userId = (req as AuthRequest).userId!;
+  getItems(req: AuthRequest, res: Response) {
+    const items = shoppingListService.getItems(req.userId!);
 
-      const items = shoppingListService.getItems(userId);
-
-      return res.status(200).json(items);
-    } catch (error) {
-      console.error("Get shopping list error:", error);
-      return res.status(500).json({
-        message: "Failed to retrieve shopping list",
-      });
-    }
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Shopping list retrieved successfully",
+      data: items,
+    });
   },
 
   // Adds a new item to the authenticated user's shopping list.
-  addItem(req: Request, res: Response) {
-    try {
-      const userId = (req as AuthRequest).userId!;
-      const { name, quantity, unit } = req.body;
+  addItem(req: AuthRequest, res: Response) {
+    const { name, quantity, unit } = req.body;
 
-      const item = shoppingListService.addItem(userId, {
-        name,
-        quantity,
-        unit,
-      });
+    const item = shoppingListService.addItem(req.userId!, {
+      name,
+      quantity,
+      unit,
+    });
 
-      return res.status(201).json({
-        message: "Shopping list item added successfully",
-        item,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
-      }
-
-      return res.status(500).json({
-        message: "Failed to add shopping list item",
-      });
-    }
+    return res.status(HTTP_STATUS.CREATED).json({
+      message: "Shopping list item added successfully",
+      data: item,
+    });
   },
 
   // Updates a shopping list item after validating its ID.
-  updateItem(req: Request, res: Response) {
-    try {
-      const userId = (req as AuthRequest).userId!;
-      const itemId = Number(req.params.id);
+  updateItem(req: AuthRequest, res: Response) {
+    const itemId = Number(req.params.id);
 
-      if (!Number.isInteger(itemId) || itemId <= 0) {
-        return res.status(400).json({
-          message: "Invalid shopping list item ID",
-        });
-      }
-
-      const item = shoppingListService.updateItem(
-        userId,
-        itemId,
-        req.body
+    if (!Number.isInteger(itemId) || itemId <= 0) {
+      throw new AppError(
+        HTTP_STATUS.BAD_REQUEST,
+        "Invalid shopping list item ID"
       );
-
-      if (!item) {
-        return res.status(404).json({
-          message: "Shopping list item not found",
-        });
-      }
-
-      return res.status(200).json({
-        message: "Shopping list item updated successfully",
-        item,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
-      }
-
-      return res.status(500).json({
-        message: "Failed to update shopping list item",
-      });
     }
+
+    const item = shoppingListService.updateItem(
+      req.userId!,
+      itemId,
+      req.body
+    );
+
+    if (!item) {
+      throw new AppError(
+        HTTP_STATUS.NOT_FOUND,
+        "Shopping list item not found"
+      );
+    }
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Shopping list item updated successfully",
+      data: item,
+    });
   },
 
   // Deletes a shopping list item after validating its ID.
-  deleteItem(req: Request, res: Response) {
-    try {
-      const userId = (req as AuthRequest).userId!;
-      const itemId = Number(req.params.id);
+  deleteItem(req: AuthRequest, res: Response) {
+    const itemId = Number(req.params.id);
 
-      if (!Number.isInteger(itemId) || itemId <= 0) {
-        return res.status(400).json({
-          message: "Invalid shopping list item ID",
-        });
-      }
-
-      const deleted = shoppingListService.deleteItem(userId, itemId);
-
-      if (!deleted) {
-        return res.status(404).json({
-          message: "Shopping list item not found",
-        });
-      }
-
-      return res.status(200).json({
-        message: "Shopping list item deleted successfully",
-      });
-    } catch (error) {
-      console.error("Delete shopping list item error:", error);
-      return res.status(500).json({
-        message: "Failed to delete shopping list item",
-      });
+    if (!Number.isInteger(itemId) || itemId <= 0) {
+      throw new AppError(
+        HTTP_STATUS.BAD_REQUEST,
+        "Invalid shopping list item ID"
+      );
     }
+
+    const deleted = shoppingListService.deleteItem(
+      req.userId!,
+      itemId
+    );
+
+    if (!deleted) {
+      throw new AppError(
+        HTTP_STATUS.NOT_FOUND,
+        "Shopping list item not found"
+      );
+    }
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Shopping list item deleted successfully",
+    });
   },
 };
