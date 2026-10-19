@@ -1,27 +1,24 @@
-import { Request, Response } from "express";
-import { AuthRequest } from "../../middleware/authMiddleware.js";
+
+import type { Request, Response } from "express";
+import type { AuthRequest } from "../../middleware/authMiddleware.js";
 import { ingredientsService } from "./ingredients.service.js";
+import { HTTP_STATUS } from "../../utils/http-status.js";
 
 // Creates an ingredient for a recipe owned by the authenticated user.
 export const createIngredient = (
   req: AuthRequest,
   res: Response
 ) => {
-  try {
-    const ingredient = ingredientsService.create(
-      req.userId!,
-      Number(req.params.recipeId),
-      req.body
-    );
+  const ingredient = ingredientsService.create(
+    req.userId!,
+    Number(req.params.recipeId),
+    req.body
+  );
 
-    res.status(201).json(ingredient);
-  } catch (error) {
-    res.status(400).json({
-      message: error instanceof Error
-        ? error.message
-        : "Could not create ingredient"
-    });
-  }
+  return res.status(HTTP_STATUS.CREATED).json({
+    message: "Ingredient created successfully",
+    data: ingredient,
+  });
 };
 
 // Retrieves all ingredients belonging to a specific recipe.
@@ -29,39 +26,27 @@ export const getIngredients = (
   req: Request,
   res: Response
 ) => {
-  try {
-    const ingredients =
-      ingredientsService.getByRecipeId(
-        Number(req.params.recipeId)
-      );
+  const ingredients = ingredientsService.getByRecipeId(
+    Number(req.params.recipeId)
+  );
 
-    res.status(200).json(ingredients);
-  } catch {
-    res.status(500).json({
-      message: "Could not get ingredients"
-    });
-  }
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Ingredients retrieved successfully",
+    data: ingredients,
+  });
 };
 
-// Deletes an ingredient after verifying the user's ownership of its recipe.
+// Deletes an ingredient after verifying ownership of its recipe.
 export const deleteIngredient = (
   req: AuthRequest,
   res: Response
 ) => {
-  try {
-    ingredientsService.delete(
-      req.userId!,
-      Number(req.params.id)
-    );
+  ingredientsService.delete(
+    req.userId!,
+    Number(req.params.id)
+  );
 
-    res.status(200).json({
-      message: "Ingredient deleted successfully"
-    });
-  } catch (error) {
-    res.status(404).json({
-      message: error instanceof Error
-        ? error.message
-        : "Ingredient not found"
-    });
-  }
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Ingredient deleted successfully",
+  });
 };

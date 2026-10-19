@@ -1,21 +1,20 @@
 
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { categoriesService } from "./categories.service.js";
+import { HTTP_STATUS } from "../../utils/http-status.js";
+import { AppError } from "../../utils/app-error.js";
 
 // Retrieves all available recipe categories.
 export const getCategories = (
   _req: Request,
   res: Response
 ) => {
-  try {
-    const categories = categoriesService.getAll();
+  const categories = categoriesService.getAll();
 
-    res.status(200).json(categories);
-  } catch {
-    res.status(500).json({
-      message: "Could not get categories"
-    });
-  }
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Categories retrieved successfully",
+    data: categories,
+  });
 };
 
 // Retrieves a single category using its ID.
@@ -23,19 +22,21 @@ export const getCategory = (
   req: Request,
   res: Response
 ) => {
-  try {
-    const category = categoriesService.getById(
-      Number(req.params.id)
-    );
+  const category = categoriesService.getById(
+    Number(req.params.id)
+  );
 
-    res.status(200).json(category);
-  } catch (error) {
-    res.status(404).json({
-      message: error instanceof Error
-        ? error.message
-        : "Category not found"
-    });
+  if (!category) {
+    throw new AppError(
+      HTTP_STATUS.NOT_FOUND,
+      "Category not found"
+    );
   }
+
+  return res.status(HTTP_STATUS.OK).json({
+    message: "Category retrieved successfully",
+    data: category,
+  });
 };
 
 // Creates a new category using the name provided in the request body.
@@ -43,17 +44,10 @@ export const createCategory = (
   req: Request,
   res: Response
 ) => {
-  try {
-    const category = categoriesService.create(
-      req.body.name
-    );
+  const category = categoriesService.create(req.body.name);
 
-    res.status(201).json(category);
-  } catch (error) {
-    res.status(400).json({
-      message: error instanceof Error
-        ? error.message
-        : "Could not create category"
-    });
-  }
+  return res.status(HTTP_STATUS.CREATED).json({
+    message: "Category created successfully",
+    data: category,
+  });
 };

@@ -7,6 +7,7 @@ import categoryRoutes from "./features/categories/categories.routes.js";
 import favouriteRoutes from "./features/favorites/favorites.routes.js";
 import shoppingListRoutes from "./features/shopping_list/shopping-list.routes.js";
 import usersRoutes from "./features/users/users.routes.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
@@ -27,5 +28,5 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/favourites", favouriteRoutes);
 app.use("/api/shopping-list", shoppingListRoutes);
 app.use("/api/users", usersRoutes);
-
+app.use(errorHandler);
 export default app;
