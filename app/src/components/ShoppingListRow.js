@@ -77,17 +77,17 @@ const ShoppingListRow = ({list, onDelete, toggleItem, onEditTitle, onEditItem}) 
             />
 
             {list.items.map((listItem, index) => (
-              <View key={index} style={staticStyles.itemRow}>
+              <View key={listItem.id} style={staticStyles.itemRow}>
                 <Checkbox
                 style={staticStyles.checkbox}
                 value={listItem.checked}
-                onValueChange={() => toggleItem(list.id, index)}
+                onValueChange={() => toggleItem(listItem.id, listItem.checked)}
                 color={listItem.checked ? '#6A569E' : undefined}
                 />
                 <TextInput
                 style={[staticStyles.itemText, listItem.checked && staticStyles.itemTextChecked]}
                 value={listItem.text}
-                onChangeText={(text) => onEditItem(list.id, index, text)}
+                onChangeText={(text) => onEditItem(listItem.id, text, list.name)}
                 placeholder={`Item #${index+1}`}/>
               </View>
             ))}
