@@ -2,8 +2,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useContext, useMemo, useRef, useState } from 'react';
 import { Animated, PanResponder, TouchableOpacity, View, Text, Image } from 'react-native';
 import staticStyles from '../static/styles';
-import { updateFavourite } from '../utils/recipe';
 import AuthContext from './AuthContext';
+import Recipe from '../utils/types/recipe';
 
 const RecipeListItem = ({item}) => {
   const navigation = useNavigation();
@@ -29,10 +29,13 @@ const RecipeListItem = ({item}) => {
 
     onPanResponderRelease: async () => {
       if (pan.x._value < -90) { // Left -> edit recipe
-        navigation.navigate("Edit Recipe", {recipe: recipe});
+        navigation.navigate("Edit Recipe", {recipe: recipe.getData()});
       } else if (pan.x._value > 90) { // Right -> mark/unmark recipe as favourite
-        let fav = await updateFavourite(user.token, recipe);
-        setRecipe(() => ({...recipe, isFavourite: fav})); // Refresh recipe to show/hide ★
+        let updatedRecipe = new Recipe({...recipe});
+        updatedRecipe.categories = recipe.categories;
+        updatedRecipe.ingredients = recipe.ingredients;
+        updatedRecipe.isFavourite = await recipe.edit.isFavourite(user.token);
+        setRecipe(() => ({...updatedRecipe})); // Refresh recipe to show/hide ★
       }
       
       // Refresh element
@@ -52,7 +55,7 @@ const RecipeListItem = ({item}) => {
         style={{transform: [{translateX: pan.x}, {translateY: 0}]}}
         {...panResponder.panHandlers}
         >
-        <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: recipe})}>
+        <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: recipe.getData()})}>
           <Text style={{position: "absolute", top: 5, right: 10, fontSize: 24, color: "#bb6400a0", fontWeight: "bold"}}>{recipe.isFavourite ? "★" : ""}</Text>
           <View style={staticStyles.recipeTextContainer}>
             <Text style={staticStyles.category}>{recipe.categories.map(category => category.name + " ")}</Text>

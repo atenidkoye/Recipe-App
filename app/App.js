@@ -29,7 +29,6 @@ const App = () => {
   useEffect(() => {
     // Try to get user data from local storage
     // TODO: add a loading screen while fetching data
-    // TODO: check wheter the token is still valid
     getUserData().then(async (userData) => {
       if (userData && !user) {
         if (await isTokenValid(userData.token)) { // Only log in user if the token is still valid
@@ -56,16 +55,15 @@ const App = () => {
           <Stack.Screen name="Register" component={RegisterScreen} options={{headerShown: false}} />
 
           {/* App screens */}
-          <Stack.Screen name="Recipe List" component={RecipeList} options={{headerShown: false}} initialParams={{isUserList: true}} />
           <Stack.Screen name="Featured List" component={RecipeList} options={{headerShown: false}} initialParams={{isUserList: false}} />
-          <Stack.Screen name="Search" component={Search} options={{headerShown: false}} />
+          <Stack.Screen name="Recipe List" component={RecipeList} options={{headerShown: false}} initialParams={{isUserList: true}} />
           <Stack.Screen name="Shopping List" component={ShoppingList} options={{headerShown: false}} />
           <Stack.Screen name="Account" component={Account} options={{headerShown: false}} />
 
           {/* Sub screens */}
-          <Stack.Screen name="Recipe" component={Recipe} options={{headerShown: false}} />
           <Stack.Screen name="Add Recipe" component={RecipeEditor} options={{headerShown: false}} initialParams={{recipe: null}} />
           <Stack.Screen name="Edit Recipe" component={RecipeEditor} options={{headerShown: false}} initialParams={{recipe: null}}/>
+          <Stack.Screen name="Recipe" component={Recipe} options={{headerShown: false}} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthContext>

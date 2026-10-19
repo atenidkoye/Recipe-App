@@ -8,6 +8,32 @@ const staticStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
+
+    iconButton: {
+        borderRadius: 7,
+        padding: 10,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    iconButtonImage: {
+        width: 25,
+        height: 25,
+    },
+
+    confirmButton: {
+        backgroundColor: "#6A569E",
+    },
+
+    cancelButton: {
+        backgroundColor: "#D63A3A",
+    },
+
+    activeIndicator: {
+        backgroundColor: "#6A569EC0"
+    },  
+
     // login/register screen
     safeArea: {
         flex: 1,
@@ -16,7 +42,7 @@ const staticStyles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        paddingTop: 50,
+        paddingTop: 30,
     },
     headerText: {
         fontSize: 26,
@@ -78,8 +104,9 @@ const staticStyles = StyleSheet.create({
     },
     buttonText: {
         color: "white",
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '400',
+        textAlign: "center"
     },
     // login/register screen ends
 
@@ -148,6 +175,15 @@ const staticStyles = StyleSheet.create({
     description: {
         fontSize: 12
     },
+    listAddButton: {
+        position: "absolute",
+        bottom: 100,
+        right: 20,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        backgroundColor: "#6A569E",
+    },  
     // recipe list screen ends
     // shopping list screen
     shoppingContainer: {
@@ -232,6 +268,153 @@ const staticStyles = StyleSheet.create({
         color: '#999',
     },
     // shopping list screen ends
+
+    // recipe editor screen starts
+    editorButtons: {
+        flexDirection: "row",
+        justifyContent: "space-evenly"
+    },
+
+    editorButton: {
+        width: "40%",
+        borderRadius: 10,
+        paddingVertical: 10
+    },
+
+    editorForm: {
+        borderColor: "#E0E0E0",
+        borderWidth: 1,
+        borderRadius: 10,
+        backgroundColor: "#E7DDF7",
+        paddingHorizontal: 10,
+        marginBottom: 20,
+    },
+
+    editorFormPart: {
+        borderColor: "#6A569E",
+        borderBottomWidth: 2,
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+    },
+
+    editorPublicButton: {
+        padding: 10,
+        backgroundColor: "#6A569E",
+        borderRadius: 10
+    },
+
+    editorMainLabel: {
+        fontSize: 20,
+        marginBottom: 10,
+        fontWeight: "bold"
+    },
+
+    editorInput: {
+        backgroundColor: 'white',
+        borderRadius: 6,
+        borderBottomWidth: 2,
+        borderColor: '#6A569E',
+        paddingHorizontal: 7,
+        paddingVertical: 12,
+        marginBottom: 20,
+        fontSize: 16,
+    },
+
+    editorBigInput: {
+        textAlignVertical: "top",
+        minHeight: 150,
+    },
+
+    editorNumericInfo: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginHorizontal: 15
+    },
+
+    editorLabelAndInput: {
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    editorServings: {
+        flexDirection: "row", 
+        justifyContent: "center", 
+        alignItems: "center", 
+        gap: 10, 
+    },
+
+    editorMultiRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center", 
+        gap: 10
+    },
+
+    editorIconButton: {
+        marginBottom: 5, 
+        borderBottomWidth: 2,
+        borderColor: "#6A569E",
+    },
+
+    editorCategory: {
+        borderWidth: 1,
+        paddingVertical: 3,
+        paddingHorizontal: 7,
+        borderRadius: 10,
+        backgroundColor: "#6A569E80",
+        color: "white",
+        fontWeight: "bold"
+    },
+    // recipe editor screen ends
+
+    // modal style starts
+    modal: {
+        flex: 1,
+        backgroundColor : "#000000C8",
+        alignItems: 'center',
+        justifyContent: 'center',
+    },  
+    
+    modalView: {
+        height: 300,
+        width: "100%",
+        position: "absolute",
+        bottom: 0,
+        backgroundColor: "#F4EAFB",
+        borderWidth: 1,
+        borderTopWidth: 2,
+        borderBottomWidth: 0,
+        borderColor: "#6A569E",
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+    },
+
+    modalSlot: {
+        flexDirection: "row", 
+        justifyContent: "center", 
+        alignItems: "center", 
+        gap: 20,
+        height: 190
+    },
+
+    modalTimeContainer: {
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    modalTimeInput: {
+        fontSize: 24, 
+        padding: 20,
+        paddingHorizontal: 30,
+        backgroundColor: "white",
+        borderRadius: 10,
+    },
+
+
+    // modal style ends
 });
 
 export default staticStyles;

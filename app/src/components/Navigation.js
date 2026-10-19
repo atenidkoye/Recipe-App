@@ -1,26 +1,30 @@
-import { useNavigation } from "@react-navigation/native"
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native"
+import { View, StyleSheet } from "react-native";
 import staticStyles from "../static/styles";
+import IconButton from './IconButton';
+import img from '../static/img';
 
 const Navigation = ({activeTab}) => {
+  let route = useRoute();
   const navigation = useNavigation();
-
+  
   return (
     <View style={[staticStyles.centered, styles.container]}>
-      {/* <Button title="Discover" onPress={() => navigation.navigate("Featured List")}/>
-      <Button title="Search" onPress={() => navigation.navigate("Search")} />
-      <Button title="List" onPress={() => navigation.navigate("Recipe List")}/>
-      <Button title="Shopping" onPress={() => navigation.navigate("Shopping List")}/>
-      <Button title="Account" onPress={() => navigation.navigate("Account")}/> */}
 
-      <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Featured List")}>
+      <IconButton style={route.name == "Featured List" ? staticStyles.activeIndicator : null} icon={img.feature} onPress={() => navigation.navigate("Featured List")} />
+      <IconButton style={route.name == "Add Recipe" ? staticStyles.activeIndicator : null} icon={img.add} onPress={() => navigation.navigate("Add Recipe")} />
+      <IconButton style={route.name == "Recipe List" ? staticStyles.activeIndicator : null} icon={img.recipe} onPress={() => navigation.navigate("Recipe List")} />
+      <IconButton style={route.name == "Shopping List" ? staticStyles.activeIndicator : null} icon={img.cart} onPress={() => navigation.navigate("Shopping List")} />
+      <IconButton style={route.name == "Account" ? staticStyles.activeIndicator : null} icon={img.account} onPress={() => navigation.navigate("Account")} />
+
+      {/* <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Featured List")}>
         <Text style={staticStyles.navText && staticStyles.activeNavText}>Discover</Text>
         {activeTab === "Recipe List" && <View style={staticStyles.activeIndicator}></View>}
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
-      <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Search")}>
-        <Text style={staticStyles.navText && staticStyles.activeNavText}>Search</Text>
-        {activeTab === "Search" && <View style={staticStyles.activeIndicator}></View>}
+      {/* <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Add Recipe")}>
+        <Text style={staticStyles.navText && staticStyles.activeNavText}>Add Recipe</Text>
+        {activeTab === "Add Recipe" && <View style={staticStyles.activeIndicator}></View>}
       </TouchableOpacity>
 
       <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Recipe List")}>
@@ -36,7 +40,7 @@ const Navigation = ({activeTab}) => {
       <TouchableOpacity style={staticStyles.navItem} onPress={() => navigation.navigate("Account")}>
         <Text style={staticStyles.navText && staticStyles.activeNavText}>Account</Text>
         {activeTab === "Account" && <View style={staticStyles.activeIndicator}></View>}
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
     </View>
   )
@@ -56,27 +60,5 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#FAEDFF",
     paddingBottom: 15,
-  },
-  navItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: 'center',
-    height: '100%',
-    position: 'relative'
-  },
-  navText: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  activeNavText: {
-    color: '#6A569E',
-    fontWeight: '700',
-  },
-  activeIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    width: 30,
-    height: 3,
-    backgroundColor: '#6A569E',
   }
 })

@@ -4,9 +4,11 @@ import staticStyles from '../static/styles';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useContext, useEffect, useRef, useState } from "react";
 import authContext from '../components/AuthContext';
-import { fetchRecipes, fetchUserRecipes, readUserRecipes } from "../utils/recipe";
+import { fetchRecipes, fetchUserRecipes } from "../utils/backendConn";
+import { readUserRecipes } from '../utils/localDBConn';
 import { useNavigation } from "@react-navigation/native";
 import RecipeListItem from '../components/RecipeListItem';
+import TextButton from "../components/TextButton";
 
 const RecipeList = ({route}) => {
   const navigation = useNavigation();
@@ -52,7 +54,7 @@ const RecipeList = ({route}) => {
   // Update search phrase state after user doesn't input any character in 1.5 seconds
   function updateSearchPhrase(phrase) {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    searchTimeout.current = setTimeout(() => setSearchPhrase(phrase), 1500);
+    searchTimeout.current = setTimeout(() => setSearchPhrase(phrase.toLowerCase()), 1500);
   }
   
 
@@ -88,7 +90,9 @@ const RecipeList = ({route}) => {
                 </View>
               ) : (
                 <FlatList
-                  data={recipes.filter(recipe => recipe.title.toLowerCase().includes(searchPhrase))}
+                  data={recipes.filter(
+                    recipe => recipe.title.toLowerCase().includes(searchPhrase) || recipe.description.toLowerCase().includes(searchPhrase)
+                  )}
                   keyExtractor={(item) => item.id}
                   renderItem={(item) => <RecipeListItem item={item.item} />}
                 />
@@ -98,9 +102,12 @@ const RecipeList = ({route}) => {
         </View>
       </View>
       {!isUserList || isEmpty || loading ? null : (
-        <TouchableOpacity style={{position: "absolute", bottom: 100, right: 20}} onPress={() => navigation.navigate("Add Recipe")}>
-          <Text>Add Recipe</Text>
-        </TouchableOpacity>
+        <TextButton 
+          style={staticStyles.listAddButton} 
+          onPress={() => navigation.navigate("Add Recipe")} 
+          buttonText="Add Recipe"
+          textStyle={{fontSize: 16}}
+        />
       )}
       <Navigation activeTab="Recipe List"/>
     </SafeAreaView>
