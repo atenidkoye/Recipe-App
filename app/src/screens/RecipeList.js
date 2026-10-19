@@ -54,7 +54,7 @@ const RecipeList = ({route}) => {
   // Update search phrase state after user doesn't input any character in 1.5 seconds
   function updateSearchPhrase(phrase) {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    searchTimeout.current = setTimeout(() => setSearchPhrase(phrase), 1500);
+    searchTimeout.current = setTimeout(() => setSearchPhrase(phrase.toLowerCase()), 1500);
   }
   
 
@@ -90,7 +90,9 @@ const RecipeList = ({route}) => {
                 </View>
               ) : (
                 <FlatList
-                  data={recipes.filter(recipe => recipe.title.toLowerCase().includes(searchPhrase))}
+                  data={recipes.filter(
+                    recipe => recipe.title.toLowerCase().includes(searchPhrase) || recipe.description.toLowerCase().includes(searchPhrase)
+                  )}
                   keyExtractor={(item) => item.id}
                   renderItem={(item) => <RecipeListItem item={item.item} />}
                 />
