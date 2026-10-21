@@ -34,6 +34,19 @@ const staticStyles = StyleSheet.create({
         backgroundColor: "#6A569EC0"
     },  
 
+    popupView: {
+        height: 300,
+        width: "80%",
+        position: "absolute",
+        left: "10%",
+        bottom: "50%",
+        transform: [{translateY: "50%"}],
+        backgroundColor: "#FFF",
+        borderWidth: 1,
+        borderColor: "#6A569E",
+        borderRadius: 15,
+    },
+
     // login/register screen
     safeArea: {
         flex: 1,
@@ -184,6 +197,25 @@ const staticStyles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: "#6A569E",
     },  
+    categoryStyle: {
+        backgroundColor: "#E7DDF7C0",
+        borderWidth: 1,
+        borderColor: "black",
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+    }, 
+    categoryHolder: {
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: 10,
+        backgroundColor: "white",
+        borderRadius: 10,
+        width: 150,
+        height: 150,
+        padding: 7,
+        flexWrap: "wrap"
+    },
     // recipe list screen ends
     // shopping list screen
     shoppingContainer: {

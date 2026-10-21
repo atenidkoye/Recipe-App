@@ -1,14 +1,16 @@
-import { View, Text, TextInput, FlatList, ActivityIndicator, Image, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, FlatList, ActivityIndicator, Image, TouchableOpacity, Modal } from "react-native";
 import Navigation from "../components/Navigation";
 import staticStyles from '../static/styles';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useContext, useEffect, useRef, useState } from "react";
 import authContext from '../components/AuthContext';
-import { fetchRecipes, fetchUserRecipes } from "../utils/backendConn";
+import { fetchCategories, fetchRecipes, fetchUserRecipes } from "../utils/backendConn";
 import { readUserRecipes } from '../utils/localDBConn';
 import { useNavigation } from "@react-navigation/native";
 import RecipeListItem from '../components/RecipeListItem';
 import TextButton from "../components/TextButton";
+import IconButton from "../components/IconButton";
+import img from "../static/img";
 
 const RecipeList = ({route}) => {
   const navigation = useNavigation();
@@ -21,11 +23,31 @@ const RecipeList = ({route}) => {
   const [isEmpty, setIsEmpty] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
 
-  let searchTimeout = useRef(null);
-  let loadingTimeout = useRef(null);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categoryModalActive, setCategoryModalActive] = useState(false);
+  
+  const categorySorter = (a, b) => selectedCategories.includes(b) - selectedCategories.includes(a);
 
+  const searchTimeout = useRef(null);
+  const loadingTimeout = useRef(null);
+
+  const selectCategory = (category) => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories([...selectedCategories.filter(c => c != category)])
+    } else {
+      setSelectedCategories([...selectedCategories, category])
+    }
+  }
+
+  const loadCategories = async () => {
+    setCategories(await fetchCategories());
+  }
+  
   // Get recipe data
   useEffect(() => {
+    loadCategories();
+
     if (!isUserList) {
       fetchRecipes(setRecipes);
     } else {
@@ -56,10 +78,34 @@ const RecipeList = ({route}) => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     searchTimeout.current = setTimeout(() => setSearchPhrase(phrase.toLowerCase()), 1500);
   }
-  
 
   return (
     <SafeAreaView style={staticStyles.safeArea}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={categoryModalActive}
+      >
+        <View style={staticStyles.modal}>
+          <View style={staticStyles.popupView}>
+            <IconButton
+              icon={img.close}
+              style={{position: "absolute", right: 0}}
+              iconStyle={{width: 18, height: 18}}
+              onPress={() => setCategoryModalActive(false)}
+            />
+            <View style={{flexDirection: "row", flexWrap: "wrap", gap: 20, margin: 30, justifyContent: "center"}}>
+              {categories.sort(categorySorter).map((category, index) => <TextButton 
+                key={index}
+                buttonText={category.name}
+                textStyle={{color: "black", fontSize: 14}}
+                style={[staticStyles.categoryStyle, selectedCategories.includes(category) ? {backgroundColor: "#866EC0"} : null]}
+                onPress={() => selectCategory(category)}
+              />)}
+            </View>
+          </View>
+        </View>
+      </Modal>
       <View style={staticStyles.container}>
         <Text style={staticStyles.headerText}>{isUserList ? "My" : "Featured"} recipes</Text>
 
@@ -76,6 +122,23 @@ const RecipeList = ({route}) => {
           />
         </View>
 
+        <View style={{flexDirection: "row", gap: 20, marginHorizontal: 10}}>
+          {categories.sort(categorySorter).slice(0, 4).map((category, index) => <TextButton 
+              key={index}
+              buttonText={category.name}
+              textStyle={{color: "black", fontSize: 14}}
+              style={[staticStyles.categoryStyle, selectedCategories.includes(category) ? {backgroundColor: "#866EC0"} : null]}
+              onPress={() => selectCategory(category)}
+            />
+          )}
+          <TextButton 
+            buttonText={"..."}
+            textStyle={{color: "black", fontSize: 14}}
+            style={staticStyles.categoryStyle}
+            onPress={() => setCategoryModalActive(true)}
+          />
+        </View>
+
         <View style={staticStyles.mainContent}>
           <View style={staticStyles.listContainer}>
             {loading ? (
@@ -89,13 +152,23 @@ const RecipeList = ({route}) => {
                   </TouchableOpacity>
                 </View>
               ) : (
+                <View>
+                <Text style={{fontSize: 12, textAlign: 'center', color:'grey'}}>By swiping left you can set recipe as favourite</Text>
+                <Text style={{fontSize: 12, textAlign: 'center', color:'grey', marginBottom: 10}}>By swiping right you can edit recipe</Text>
                 <FlatList
                   data={recipes.filter(
-                    recipe => recipe.title.toLowerCase().includes(searchPhrase) || recipe.description.toLowerCase().includes(searchPhrase)
+                    recipe => (
+                      recipe.title.toLowerCase().includes(searchPhrase) || 
+                      recipe.description.toLowerCase().includes(searchPhrase)
+                    ) && (
+                      selectedCategories.length == 0 || 
+                      selectedCategories.some(category => recipe.categories.some(c => c.name == category.name))
+                    )
                   )}
                   keyExtractor={(item) => item.id}
                   renderItem={(item) => <RecipeListItem item={item.item} />}
-                />
+                  />
+                </View>
               )
             )}
           </View>
