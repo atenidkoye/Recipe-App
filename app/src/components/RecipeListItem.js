@@ -35,7 +35,7 @@ const RecipeListItem = ({item}) => {
         updatedRecipe.categories = recipe.categories;
         updatedRecipe.ingredients = recipe.ingredients;
         updatedRecipe.isFavourite = await recipe.edit.isFavourite(user.token);
-        setRecipe(() => ({...updatedRecipe})); // Refresh recipe to show/hide ★
+        setRecipe(() => (updatedRecipe)); // Refresh recipe to show/hide ★
       }
       
       // Refresh element
