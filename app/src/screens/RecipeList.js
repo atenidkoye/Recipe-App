@@ -153,8 +153,8 @@ const RecipeList = ({route}) => {
                 </View>
               ) : (
                 <View>
-                <Text style={{fontSize: 12, textAlign: 'center', color:'grey'}}>By swiping left you can set recipe as favourite</Text>
-                <Text style={{fontSize: 12, textAlign: 'center', color:'grey', marginBottom: 10}}>By swiping right you can edit recipe</Text>
+                <Text style={{fontSize: 12, textAlign: 'center', color:'grey'}}>By swiping right you can mark recipe as favourite</Text>
+                <Text style={{fontSize: 12, textAlign: 'center', color:'grey', marginBottom: 10}}>By swiping left you can edit recipe</Text>
                 <FlatList
                   data={recipes.filter(
                     recipe => (
