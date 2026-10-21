@@ -152,6 +152,9 @@ const RecipeList = ({route}) => {
                   </TouchableOpacity>
                 </View>
               ) : (
+                <View>
+                <Text style={{fontSize: 12, textAlign: 'center', color:'grey'}}>By swiping left you can set recipe as favourite</Text>
+                <Text style={{fontSize: 12, textAlign: 'center', color:'grey', marginBottom: 10}}>By swiping right you can edit recipe</Text>
                 <FlatList
                   data={recipes.filter(
                     recipe => (
@@ -164,7 +167,8 @@ const RecipeList = ({route}) => {
                   )}
                   keyExtractor={(item) => item.id}
                   renderItem={(item) => <RecipeListItem item={item.item} />}
-                />
+                  />
+                </View>
               )
             )}
           </View>
