@@ -42,8 +42,7 @@ class ShoppingItem {
                 Alert.alert("Error", body.message);
                 return false;
             }
-
-            this.id = body.data.item.id;
+            this.id = body.data.id;
             return true;
         }
     }
