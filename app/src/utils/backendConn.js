@@ -84,3 +84,28 @@ export const fetchCategories = async () => {
 
   return body;
 }
+
+export const updateUserProfile = async (userToken, name, email) => {
+  try {
+    const response = await fetch('http://10.0.2.2:4000/api/users/me', {
+      method: 'PUT',
+      headers: {
+        'authorization': `Bearer ${userToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name, email}),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      Alert.alert("Error", data.message);
+      return null;
+    }
+
+    return data.user;
+  } catch (err) {
+    Alert.alert("Error", err);
+    return null;
+  }
+}
