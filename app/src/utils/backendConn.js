@@ -12,18 +12,18 @@ export const fetchRecipes = async (setRecipes) => {
   // Fetch public recipes
   const response = await fetch('http://10.0.2.2:4000/api/recipes');
 
-  const data = await response.json();
+  const body = await response.json();
 
   // Inform user about error via alert popup
   if (!response.ok) {
-    Alert.alert("Error", data.message);
+    Alert.alert("Error", body.message);
   }
 
   let recipes = [];
 
   // Add additional data to the recipe object
-  for (let index in data) {
-    let recipe = new Recipe(data[index]);
+  for (let index in body.data) {
+    let recipe = new Recipe(body.data[index]);
     await recipe.fetch.categories();
     await recipe.fetch.ingredients();
     recipe.isFavourite = false;
@@ -52,18 +52,18 @@ export const fetchUserRecipes = async (userToken, setRecipes) => {
     }
   });
 
-  const data = await response.json();
+  const body = await response.json();
 
   // Inform user about error via alert popup
   if (!response.ok) {
-    return Alert.alert("Error", data.message);
+    return Alert.alert("Error", body.message);
   }
 
   let recipes = [];
 
   // Add additional data to the recipe object
-  for (let index in data) {
-    let recipe = new Recipe(data[index]);
+  for (let index in body.data) {
+    let recipe = new Recipe(body.data[index]);
     await recipe.fetch.categories();
     await recipe.fetch.ingredients();
     await recipe.fetch.isFavourite(userToken);
@@ -82,5 +82,5 @@ export const fetchCategories = async () => {
   const response = await fetch('http://10.0.2.2:4000/api/categories');
   const body = await response.json();
 
-  return body;
+  return body.data;
 }
