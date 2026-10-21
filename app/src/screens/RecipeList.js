@@ -166,7 +166,7 @@ const RecipeList = ({route}) => {
                     )
                   )}
                   keyExtractor={(item) => item.id}
-                  renderItem={(item) => <RecipeListItem item={item.item} />}
+                  renderItem={(item) => <RecipeListItem item={item.item} isUserRecipe={isUserList} />}
                   />
                 </View>
               )

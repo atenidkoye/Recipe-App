@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Alert } from "react-native";
 import Navigation from "../components/Navigation";
 import staticStyles from "../static/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,6 +18,8 @@ const Recipe = ({route}) => {
   const navigation = useNavigation();
   const { user } = useContext(AuthContext);
 
+  const isUserRecipe = route.params.isUserRecipe;
+
   const recipeParam = route.params.recipe;
   let recipe;
   recipe = new RecipeType({...recipeParam});
@@ -32,6 +34,15 @@ const Recipe = ({route}) => {
     let success = await recipe.delete.data(user.token);
     if (success) {
       navigation.navigate("Recipe List");
+    }
+  }
+
+  const addRecipe = async () => {
+    Alert.alert("Error", "Under maintenance");
+    return;
+    let success = await recipe.add.data(user.token);
+    if (success) {
+      Alert.alert("Sucess", `Successfully added ${recipe.title} to your recipes.`)
     }
   }
 
@@ -118,10 +129,11 @@ const Recipe = ({route}) => {
           )}
         </View>
         <View style={[staticStyles.editorButtons, {marginTop: 10}]}>
-          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: "55%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
-          <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} />
+          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: isUserRecipe ? "55%" : "70%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
+          {isUserRecipe ? <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} /> : null }
           <IconButton style={{backgroundColor: "#367a09"}} icon={img.cart} iconStyle={{filter: [{invert: 0.9}]}} onPress={addToShoppingList} />
-          <IconButton style={{backgroundColor: "#FF8000"}} icon={img.edit} iconStyle={{filter: [{invert: 0.9}]}} onPress={() => navigation.navigate("Edit Recipe", {recipe: recipe.getData()})} />
+          {isUserRecipe ? <IconButton style={{backgroundColor: "#FF8000"}} icon={img.edit} iconStyle={{filter: [{invert: 0.9}]}} onPress={() => navigation.navigate("Edit Recipe", {recipe: recipe.getData()})} /> : null }
+          {!isUserRecipe ? <IconButton style={{backgroundColor: "#FF8000"}} icon={img.add} iconStyle={{filter: [{invert: 0.9}]}} onPress={addRecipe} /> : null }
         </View>
         </ScrollView>
       </View>
