@@ -4,6 +4,7 @@ const img = {
     minus: require('./img/minus.png'),
     plus: require('./img/plus.png'),
     edit: require('./img/edit.png'),
+    close: require('./img/close.png'),
     
     feature: require('./img/feature.png'),
     add: require('./img/add.png'),

@@ -199,6 +199,7 @@ const ShoppingList = () => {
           />
         )}
         <View style={staticStyles.listForm}>
+          <Text style={{fontSize: 12, color: 'grey', marginBottom: 10, textAlign: "center"}}>By clicking on a text you can edit title or items</Text>
           <TextInput
           style={staticStyles.shopInput}
           placeholder="List Name"
