@@ -11,6 +11,7 @@ import img from "../static/img";
 import RecipeType from "../utils/types/recipe";
 import AuthContext from "../components/AuthContext";
 import { useContext } from "react";
+import ShoppingItem from '../utils/types/shopping_list'
 
 const Recipe = ({route}) => {
 
@@ -31,6 +32,19 @@ const Recipe = ({route}) => {
     let success = await recipe.delete.data(user.token);
     if (success) {
       navigation.navigate("Recipe List");
+    }
+  }
+
+  const addToShoppingList = async () => {
+    let success = true;
+    for (let index in recipe.ingredients) {
+      let ingredient = recipe.ingredients[index];
+      let shoppingItem = new ShoppingItem({name: ingredient.name, quantity: ingredient.quantity, unit: ingredient.unit})
+      success = shoppingItem.add.data(user.token);
+    }
+
+    if (success) {
+      navigation.navigate("Shopping List");
     }
   }
 
@@ -104,8 +118,9 @@ const Recipe = ({route}) => {
           )}
         </View>
         <View style={[staticStyles.editorButtons, {marginTop: 10}]}>
-          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: "60%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
+          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: "55%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
           <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} />
+          <IconButton style={{backgroundColor: "#367a09"}} icon={img.cart} iconStyle={{filter: [{invert: 0.9}]}} onPress={addToShoppingList} />
           <IconButton style={{backgroundColor: "#FF8000"}} icon={img.edit} iconStyle={{filter: [{invert: 0.9}]}} onPress={() => navigation.navigate("Edit Recipe", {recipe: recipe.getData()})} />
         </View>
         </ScrollView>
