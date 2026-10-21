@@ -59,7 +59,7 @@ class Recipe {
                 return;
             }
             
-            this.ingredients = body;
+            this.ingredients = body.data;
         },
 
         isFavourite: async (userToken) => {
@@ -79,7 +79,7 @@ class Recipe {
             //     return;
             // }
 
-            this.isFavourite = data.isFavourite;
+            this.isFavourite = data.data.isFavourite;
         }
     };
 
@@ -174,7 +174,7 @@ class Recipe {
             });
 
             const body = await response.json();
-            this.id = body.id;
+            this.id = body.data.id;
 
             // Check for error while saving the main recipe data
             if (!response.ok) {

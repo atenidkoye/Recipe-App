@@ -43,7 +43,7 @@ class ShoppingItem {
                 return false;
             }
 
-            this.id = body.item.id;
+            this.id = body.data.item.id;
             return true;
         }
     }

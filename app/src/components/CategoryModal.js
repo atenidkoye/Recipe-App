@@ -1,7 +1,7 @@
 import { Modal, View, Text } from "react-native";
 import staticStyles from "../static/styles";
 import TextButton from "./TextButton";
-import { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CategoryHolder from "./CategoryHolder";
 import { fetchCategories } from "../utils/backendConn";
 
@@ -12,12 +12,12 @@ const CategoryModal = ({active, setActive, activeCategories, setActiveCategories
   const initialState = useRef(activeCategories);
   
   useEffect(() => {
-    async function fetch() {
+    async function loadCategories() {
       setCategories((await fetchCategories()).filter(category => activeCategories.every(c => c.name != category.name)
       ));
     }
 
-    fetch();
+    loadCategories();
   }, [activeCategories]);
 
   const changeCategoryStatus = (statusActive, category) => {

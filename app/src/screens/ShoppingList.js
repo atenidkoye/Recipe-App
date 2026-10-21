@@ -30,7 +30,7 @@ const ShoppingList = () => {
       const data = await response.json();
 
       if (response.ok) {
-        groupItems(data);
+        groupItems(data.data);
       }
     } catch (err) {
       console.log(err);
