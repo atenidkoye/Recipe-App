@@ -1,6 +1,7 @@
+
 import * as SQLite from "expo-sqlite";
 
-
+// Defines the structure of an ingredient stored in the local database.
 export type CachedIngredient = {
   id: number;
   recipe_id: number;
@@ -9,35 +10,40 @@ export type CachedIngredient = {
   unit: string | null;
 };
 
+// Defines the structure of a recipe category.
 export type CachedCategory = {
   id: number;
   name: string;
 };
 
+// Represents a cached recipe together with its ingredients and categories.
 export type RecipeWithDetails = CachedRecipe & {
   ingredients: CachedIngredient[];
   categories: CachedCategory[];
 };
 
-
+// Holds the database connection so it can be reused throughout the app.
 let database: SQLite.SQLiteDatabase | null = null;
 
 /**
- * Opens the local database and creates the required tables.
+ * Opens the local database and creates the required tables and indexes
+ * if they do not already exist.
  */
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
+  // Reuse the existing connection if the database is already open.
   if (database) {
     return database;
   }
 
+  // Opens or creates the SQLite database file.
   const db = await SQLite.openDatabaseAsync("recipe_mobile.db");
 
-  
-
   try {
+    // Enables foreign-key constraints and initializes the database schema.
     await db.execAsync(`
       PRAGMA foreign_keys = ON;
 
+      -- Stores recipes cached from the server or created locally.
       CREATE TABLE IF NOT EXISTS recipes (
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
@@ -53,6 +59,8 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
         cached_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
 
+      -- Stores ingredients belonging to individual recipes.
+      -- Deleting a recipe also deletes its ingredients.
       CREATE TABLE IF NOT EXISTS ingredients (
         id INTEGER PRIMARY KEY,
         recipe_id INTEGER NOT NULL,
@@ -63,11 +71,13 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
           REFERENCES recipes(id) ON DELETE CASCADE
       );
 
+      -- Stores the available recipe categories.
       CREATE TABLE IF NOT EXISTS categories (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL UNIQUE
       );
 
+      -- Links recipes and categories in a many-to-many relationship.
       CREATE TABLE IF NOT EXISTS recipe_categories (
         recipe_id INTEGER NOT NULL,
         category_id INTEGER NOT NULL,
@@ -78,6 +88,7 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
           REFERENCES categories(id) ON DELETE CASCADE
       );
 
+      -- Stores the recipes each user has marked as favourites.
       CREATE TABLE IF NOT EXISTS favourites (
         user_id INTEGER NOT NULL,
         recipe_id INTEGER NOT NULL,
@@ -87,12 +98,14 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
           REFERENCES recipes(id) ON DELETE CASCADE
       );
 
+      -- Stores one shopping list per user.
       CREATE TABLE IF NOT EXISTS shopping_lists (
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL UNIQUE,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
 
+      -- Stores the individual items in each shopping list.
       CREATE TABLE IF NOT EXISTS shopping_list_items (
         id INTEGER PRIMARY KEY,
         shopping_list_id INTEGER NOT NULL,
@@ -106,6 +119,7 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
           REFERENCES shopping_lists(id) ON DELETE CASCADE
       );
 
+      -- Improves lookups by user, recipe, category, and shopping list.
       CREATE INDEX IF NOT EXISTS idx_recipes_user_id
         ON recipes(user_id);
 
@@ -122,16 +136,18 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
         ON shopping_list_items(shopping_list_id);
     `);
 
+    // Saves the connection for subsequent database operations.
     database = db;
     return db;
   } catch (error) {
+    // Closes the connection if database initialization fails.
     await db.closeAsync();
     throw error;
   }
 }
 
 /**
- * Basic recipe shape stored in SQLite.
+ * Defines the fields stored for a cached recipe.
  */
 export type CachedRecipe = {
   id: number;
@@ -147,7 +163,8 @@ export type CachedRecipe = {
 };
 
 /**
- * Inserts or updates recipe records.
+ * Inserts recipes into SQLite or updates existing records.
+ * Uses a transaction so the batch is handled together.
  */
 export async function cacheRecipes(
   recipes: CachedRecipe[]
@@ -190,7 +207,7 @@ export async function cacheRecipes(
 }
 
 /**
- * Returns cached public recipes.
+ * Retrieves cached public recipes, ordered from newest to oldest.
  */
 export async function getCachedRecipes(): Promise<CachedRecipe[]> {
   const db = await getDatabase();
@@ -205,7 +222,7 @@ export async function getCachedRecipes(): Promise<CachedRecipe[]> {
 }
 
 /**
- * Lists application tables for debugging.
+ * Returns the names of application tables for debugging.
  */
 export async function inspectDatabase(): Promise<string[]> {
   const db = await getDatabase();
@@ -221,7 +238,9 @@ export async function inspectDatabase(): Promise<string[]> {
   return rows.map((row) => row.name);
 }
 
-
+/**
+ * Retrieves all ingredients belonging to a recipe.
+ */
 export async function getIngredients(
   recipeId: number
 ): Promise<CachedIngredient[]> {
@@ -236,6 +255,9 @@ export async function getIngredients(
   );
 }
 
+/**
+ * Inserts an ingredient or updates it if its ID already exists.
+ */
 export async function saveIngredient(
   ingredient: CachedIngredient
 ): Promise<void> {
@@ -257,6 +279,9 @@ export async function saveIngredient(
   );
 }
 
+/**
+ * Deletes an ingredient using its ID.
+ */
 export async function deleteIngredient(
   ingredientId: number
 ): Promise<void> {
@@ -268,7 +293,9 @@ export async function deleteIngredient(
   );
 }
 
-
+/**
+ * Retrieves all categories, sorted alphabetically.
+ */
 export async function getCategories(): Promise<CachedCategory[]> {
   const db = await getDatabase();
 
@@ -277,6 +304,9 @@ export async function getCategories(): Promise<CachedCategory[]> {
   );
 }
 
+/**
+ * Retrieves the categories linked to a specific recipe.
+ */
 export async function getRecipeCategories(
   recipeId: number
 ): Promise<CachedCategory[]> {
@@ -292,6 +322,9 @@ export async function getRecipeCategories(
   );
 }
 
+/**
+ * Inserts a category or updates its name if its ID already exists.
+ */
 export async function saveCategory(
   category: CachedCategory
 ): Promise<void> {
@@ -306,6 +339,9 @@ export async function saveCategory(
   );
 }
 
+/**
+ * Links a category to a recipe without creating duplicate links.
+ */
 export async function linkCategoryToRecipe(
   recipeId: number,
   categoryId: number
@@ -320,6 +356,9 @@ export async function linkCategoryToRecipe(
   );
 }
 
+/**
+ * Removes the link between a recipe and a category.
+ */
 export async function unlinkCategoryFromRecipe(
   recipeId: number,
   categoryId: number
@@ -334,7 +373,10 @@ export async function unlinkCategoryFromRecipe(
   );
 }
 
-
+/**
+ * Adds a recipe to a user's favourites.
+ * INSERT OR IGNORE prevents duplicate entries.
+ */
 export async function addFavourite(
   userId: number,
   recipeId: number
@@ -349,6 +391,9 @@ export async function addFavourite(
   );
 }
 
+/**
+ * Removes a recipe from a user's favourites.
+ */
 export async function removeFavourite(
   userId: number,
   recipeId: number
@@ -363,6 +408,9 @@ export async function removeFavourite(
   );
 }
 
+/**
+ * Returns the IDs of recipes marked as favourites by a user.
+ */
 export async function getFavouriteRecipeIds(
   userId: number
 ): Promise<number[]> {
@@ -377,7 +425,9 @@ export async function getFavouriteRecipeIds(
   return rows.map((row) => row.recipe_id);
 }
 
-
+/**
+ * Defines the fields stored for a shopping-list item.
+ */
 export type ShoppingListItem = {
   id: number;
   shopping_list_id: number;
@@ -388,17 +438,22 @@ export type ShoppingListItem = {
   created_at: string;
 };
 
+/**
+ * Retrieves a user's shopping-list ID or creates one if needed.
+ */
 export async function getOrCreateShoppingList(
   userId: number
 ): Promise<number> {
   const db = await getDatabase();
 
+  // Creates a list only if the user does not already have one.
   await db.runAsync(
     `INSERT OR IGNORE INTO shopping_lists (user_id)
      VALUES (?)`,
     userId
   );
 
+  // Retrieves the ID of the user's shopping list.
   const row = await db.getFirstAsync<{ id: number }>(
     "SELECT id FROM shopping_lists WHERE user_id = ?",
     userId
@@ -411,6 +466,9 @@ export async function getOrCreateShoppingList(
   return row.id;
 }
 
+/**
+ * Retrieves all items belonging to a shopping list.
+ */
 export async function getShoppingListItems(
   shoppingListId: number
 ): Promise<ShoppingListItem[]> {
@@ -426,6 +484,9 @@ export async function getShoppingListItems(
   );
 }
 
+/**
+ * Adds an item to a shopping list and returns its generated ID.
+ */
 export async function addShoppingListItem(
   shoppingListId: number,
   name: string,
@@ -447,12 +508,16 @@ export async function addShoppingListItem(
   return result.lastInsertRowId;
 }
 
+/**
+ * Updates whether a shopping-list item has been purchased.
+ */
 export async function setShoppingItemPurchased(
   itemId: number,
   purchased: boolean
 ): Promise<void> {
   const db = await getDatabase();
 
+  // SQLite stores boolean values as integers: 1 for true and 0 for false.
   await db.runAsync(
     `UPDATE shopping_list_items
      SET is_purchased = ?
@@ -462,6 +527,9 @@ export async function setShoppingItemPurchased(
   );
 }
 
+/**
+ * Deletes a shopping-list item using its ID.
+ */
 export async function deleteShoppingListItem(
   itemId: number
 ): Promise<void> {

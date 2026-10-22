@@ -5,11 +5,16 @@ import {
   getRecipeCategories,
   getFavouriteRecipeIds,
 } from "../database/database";
+
 import Recipe from "./types/recipe";
+
+// Retrieves a user's recipes from the local SQLite database.
 export const readUserRecipes = async (setRecipes, userId = 0) => {
   try {
+    // Opens the local database connection.
     const db = await getDatabase();
 
+    // Retrieves recipes belonging to the specified user, newest first.
     const recipes = await db.getAllAsync(
       `SELECT id, user_id, title, description, instructions,
               cooking_time, servings, is_public
@@ -19,8 +24,10 @@ export const readUserRecipes = async (setRecipes, userId = 0) => {
       userId
     );
 
+    // Retrieves the IDs of recipes marked as favourites by this user.
     const favouriteIds = await getFavouriteRecipeIds(userId);
 
+    // Loads each recipe's ingredients, categories, and favourite status.
     const recipesWithDetails = await Promise.all(
       recipes.map(async (recipe) => ({
         ...recipe,
@@ -30,23 +37,29 @@ export const readUserRecipes = async (setRecipes, userId = 0) => {
       }))
     );
 
+    // Updates the screen with the retrieved recipes.
     setRecipes(recipesWithDetails);
     return recipesWithDetails;
   } catch (error) {
+    // Logs the error and returns an empty list if retrieval fails.
     console.error("Failed to read local recipes:", error);
     setRecipes([]);
     return [];
   }
 };
 
+// Saves a recipe locally by inserting a new record or updating an existing one.
 export const saveLocalRecipe = async (recipe, userId = 0) => {
+  // Opens the database and generates timestamps for the recipe.
   const db = await getDatabase();
   const now = new Date().toISOString();
   let recipeId = recipe.id;
 
+  // Groups the recipe and its related changes into one transaction.
   await db.withTransactionAsync(async () => {
     let existing = null;
 
+    // Checks whether the recipe already belongs to this user.
     if (recipeId != null) {
       existing = await db.getFirstAsync(
         "SELECT id FROM recipes WHERE id = ? AND user_id = ?",
@@ -56,6 +69,7 @@ export const saveLocalRecipe = async (recipe, userId = 0) => {
     }
 
     if (existing) {
+      // Updates the existing recipe's main information.
       await db.runAsync(
         `UPDATE recipes
          SET title = ?, description = ?, instructions = ?,
@@ -73,16 +87,19 @@ export const saveLocalRecipe = async (recipe, userId = 0) => {
         userId
       );
 
+      // Removes the old ingredients before saving the current ones.
       await db.runAsync(
         "DELETE FROM ingredients WHERE recipe_id = ?",
         recipeId
       );
 
+      // Removes the old category links before recreating them.
       await db.runAsync(
         "DELETE FROM recipe_categories WHERE recipe_id = ?",
         recipeId
       );
     } else {
+      // Inserts a new recipe and retrieves its generated database ID.
       const result = await db.runAsync(
         `INSERT INTO recipes (
            user_id, title, description, instructions,
@@ -104,6 +121,7 @@ export const saveLocalRecipe = async (recipe, userId = 0) => {
       recipeId = result.lastInsertRowId;
     }
 
+    // Saves each ingredient and converts valid quantities to numbers.
     for (const ingredient of recipe.ingredients || []) {
       const rawQuantity = ingredient.quantity;
       const quantity =
@@ -121,20 +139,25 @@ export const saveLocalRecipe = async (recipe, userId = 0) => {
       );
     }
 
+    // Saves category names and links each category to the recipe.
     for (const category of recipe.categories || []) {
+      // Skips categories without a name.
       if (!category.name) continue;
 
+      // Adds the category if it does not already exist.
       await db.runAsync(
         "INSERT OR IGNORE INTO categories (name) VALUES (?)",
         category.name
       );
 
+      // Retrieves the database ID for the saved category.
       const savedCategory = await db.getFirstAsync(
         "SELECT id FROM categories WHERE name = ?",
         category.name
       );
 
       if (savedCategory) {
+        // Links the category to the recipe without duplicating the link.
         await db.runAsync(
           `INSERT OR IGNORE INTO recipe_categories (recipe_id, category_id)
            VALUES (?, ?)`,
@@ -145,5 +168,6 @@ export const saveLocalRecipe = async (recipe, userId = 0) => {
     }
   });
 
+  // Returns the local database ID of the saved recipe.
   return recipeId;
 };
