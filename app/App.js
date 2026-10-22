@@ -1,4 +1,5 @@
 // React
+import DatabaseTest from './src/database/databaseTest';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useEffect, useState } from 'react';
@@ -47,6 +48,7 @@ const App = () => {
 
   return (
     <AuthContext value={{user, setUser}}>
+      <DatabaseTest />
       <NavigationContainer ref={navigation}>
         <Stack.Navigator initialRouteName='Login'>
 

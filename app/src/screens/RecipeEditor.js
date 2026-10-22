@@ -11,6 +11,8 @@ import TimeModal from "../components/TimeModal";
 import CategoryModal from "../components/CategoryModal";
 import AuthContext from '../components/AuthContext';
 import Recipe from "../utils/types/recipe";
+import { Alert } from "react-native";
+import { saveLocalRecipe } from "../utils/localDBConn";
 
 const RecipeEditor = ({route}) => {
   const navigation = useNavigation();
@@ -77,32 +79,43 @@ const RecipeEditor = ({route}) => {
     }
   }
 
+  
   const saveRecipe = async () => {
-    let success;
-    
-    let newRecipe = new Recipe({
+    const newRecipe = new Recipe({
       id: editing ? recipe.id : null,
-      title: title,
+      title,
       description: desc,
-      instructions: instructions.reduceRight((prev, curr) => curr + "\n" + prev),
+      instructions: instructions.join("\n"),
       cooking_time: cookingTime,
-      servings: servings,
-      is_public: Number(isPublic)
+      servings,
+      is_public: Number(isPublic),
     });
 
     newRecipe.categories = categories;
     newRecipe.ingredients = ingredients;
 
-    if (editing) {
-      success = await recipe.edit.data(user.token, newRecipe);
-    } else {
-      success = await newRecipe.add.data(user.token);
-    }
+    try {
+      let success;
 
-    if (success) {
-      navigation.navigate("Recipe List");
+      if (user.isGuest) {
+        const localId = await saveLocalRecipe(newRecipe, user.id);
+        newRecipe.id = localId;
+        success = true;
+      } else if (editing) {
+        success = await recipe.edit.data(user.token, newRecipe);
+      } else {
+        success = await newRecipe.add.data(user.token);
+      }
+
+      if (success) {
+        navigation.navigate("Recipe List");
+      }
+    } catch (error) {
+      console.error("Failed to save recipe:", error);
+      Alert.alert("Save failed", "The recipe could not be saved.");
     }
-  }
+  };
+
 
   return (
     <SafeAreaView style={staticStyles.safeArea}>
