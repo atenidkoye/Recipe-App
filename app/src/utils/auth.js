@@ -92,6 +92,11 @@ export const logout = async (setUser) => {
   setUser(null);
 }
 
+/**
+ * Check wheter user token which is saved in the local storage is still valid
+ * @param {string} token User token saved in local storage 
+ * @returns {boolean} Wheter the token is valid
+ */
 export const isTokenValid = async (token) => {
   const response = await fetch("http://10.0.2.2:4000/api/auth/validation", {
     method: "GET",
@@ -100,7 +105,7 @@ export const isTokenValid = async (token) => {
     headers: {
       "authorization": `Bearer ${token}`
     },
-    signal: AbortSignal.timeout(5000)
+    signal: AbortSignal.timeout(5000) // Time limit of 5 seconds
   });
 
   return response.ok;

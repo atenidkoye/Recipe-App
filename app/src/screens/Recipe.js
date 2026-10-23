@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet, Alert } from "react-native";
 import Navigation from "../components/Navigation";
 import staticStyles from "../static/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,26 +11,54 @@ import img from "../static/img";
 import RecipeType from "../utils/types/recipe";
 import AuthContext from "../components/AuthContext";
 import { useContext } from "react";
+import ShoppingItem from '../utils/types/shopping_list'
 
 const Recipe = ({route}) => {
 
   const navigation = useNavigation();
   const { user } = useContext(AuthContext);
 
+  const isUserRecipe = route.params.isUserRecipe;
+
+  // Create recipe object
   const recipeParam = route.params.recipe;
   let recipe;
   recipe = new RecipeType({...recipeParam});
   recipe.categories = recipeParam.categories;
   recipe.ingredients = recipeParam.ingredients;
   recipe.isFavourite = recipeParam.isFavourite;
-    
-
+  
   const instructionsList = recipe.instructions ? recipe.instructions.split("\n") : [];
 
   const deleteRecipe = async () => {
     let success = await recipe.delete.data(user.token);
-    if (success) {
+    if (success) { // After success recipe deletion navigate to recipe list
       navigation.navigate("Recipe List");
+    }
+  }
+
+  // const addRecipe = async () => {
+  //   Alert.alert("Error", "Under maintenance");
+  //   return;
+  //   let success = await recipe.add.data(user.token);
+  //   if (success) {
+  //     Alert.alert("Sucess", `Successfully added ${recipe.title} to your recipes.`)
+  //   }
+  // }
+
+  // Add ingredients of the recipe to the shopping list
+  const addToShoppingList = async () => {
+    let success = true;
+    for (let index in recipe.ingredients) {
+      let ingredient = recipe.ingredients[index];
+
+      // Create item to add to the shopping list
+      let shoppingItem = new ShoppingItem({name: ingredient.name, quantity: ingredient.quantity, unit: ingredient.unit})
+      success = shoppingItem.add.data(user.token);
+    }
+
+    if (success) {
+      navigation.navigate("Shopping List");
     }
   }
 
@@ -104,9 +132,11 @@ const Recipe = ({route}) => {
           )}
         </View>
         <View style={[staticStyles.editorButtons, {marginTop: 10}]}>
-          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: "60%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
-          <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} />
-          <IconButton style={{backgroundColor: "#FF8000"}} icon={img.edit} iconStyle={{filter: [{invert: 0.9}]}} onPress={() => navigation.navigate("Edit Recipe", {recipe: recipe.getData()})} />
+          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: isUserRecipe ? "55%" : "80%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
+          {isUserRecipe ? <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} /> : null }
+          <IconButton style={{backgroundColor: "#367a09"}} icon={img.cart} iconStyle={{filter: [{invert: 0.9}]}} onPress={addToShoppingList} />
+          {isUserRecipe ? <IconButton style={{backgroundColor: "#FF8000"}} icon={img.edit} iconStyle={{filter: [{invert: 0.9}]}} onPress={() => navigation.navigate("Edit Recipe", {recipe: recipe.getData()})} /> : null }
+          {/* {!isUserRecipe ? <IconButton style={{backgroundColor: "#FF8000"}} icon={img.add} iconStyle={{filter: [{invert: 0.9}]}} onPress={addRecipe} /> : null } */}
         </View>
         </ScrollView>
       </View>

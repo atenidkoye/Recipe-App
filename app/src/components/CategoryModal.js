@@ -11,6 +11,9 @@ const CategoryModal = ({active, setActive, activeCategories, setActiveCategories
   
   const initialState = useRef(activeCategories);
   
+  // Get all available categories from the server db
+  // Split them into selected and not selected based on the recipe
+  // Changes everytime a category gets selected/unselected
   useEffect(() => {
     async function loadCategories() {
       setCategories((await fetchCategories()).filter(category => activeCategories.every(c => c.name != category.name)
@@ -20,6 +23,7 @@ const CategoryModal = ({active, setActive, activeCategories, setActiveCategories
     loadCategories();
   }, [activeCategories]);
 
+  // Add or remove category from selected categories which in turn runs the use effect above
   const changeCategoryStatus = (statusActive, category) => {
     if (statusActive) {
       setActiveCategories([...activeCategories, category])
@@ -28,11 +32,13 @@ const CategoryModal = ({active, setActive, activeCategories, setActiveCategories
     }
   }
 
+  // Cancel button -> Close the modal after resetting selected categories
   const close = () => {
     setActiveCategories([...initialState.current])
     setActive(false);
   }
 
+  // Save button -> Close modal
   const save = () => {
     setActive(false);
   }

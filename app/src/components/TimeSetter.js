@@ -9,7 +9,7 @@ const TimeSetter = ({time, setTime}) => {
   const input = useRef(null);
 
   const updateTime = (text) => {
-    if (isNaN(text) || !text) {
+    if (isNaN(text) || !text) { // Input isn't a number
       input.current.clear();
 
       input.current.setNativeProps({text: ""})
@@ -18,7 +18,7 @@ const TimeSetter = ({time, setTime}) => {
     }
 
     let number = Number(text);
-    if (number < 0) {
+    if (number < 0) { // Smaller than 0
       input.current.clear();
       input.current.setNativeProps({text: ""})
       input.current.setNativeProps({text: time.toString()})

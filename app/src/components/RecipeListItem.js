@@ -5,7 +5,7 @@ import staticStyles from '../static/styles';
 import AuthContext from './AuthContext';
 import Recipe from '../utils/types/recipe';
 
-const RecipeListItem = ({item}) => {
+const RecipeListItem = ({item, isUserRecipe}) => {
   const navigation = useNavigation();
   const { user } = useContext(AuthContext);
 
@@ -16,7 +16,13 @@ const RecipeListItem = ({item}) => {
   const pan = useRef(new Animated.ValueXY).current;
   const panResponder = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
+    
+    // Swipping action
     onPanResponderMove: (_, gesture) => {
+      if (!isUserRecipe) {
+        return;
+      }
+
       pan.x.setValue(gesture.dx);
       if (pan.x._value < -10) { // Swipping left -> edit recipe
         setActionColour("#FF8000A0");
@@ -27,6 +33,7 @@ const RecipeListItem = ({item}) => {
       }
     },
 
+    // Swiping finished
     onPanResponderRelease: async () => {
       if (pan.x._value < -90) { // Left -> edit recipe
         navigation.navigate("Edit Recipe", {recipe: recipe.getData()});
@@ -35,7 +42,7 @@ const RecipeListItem = ({item}) => {
         updatedRecipe.categories = recipe.categories;
         updatedRecipe.ingredients = recipe.ingredients;
         updatedRecipe.isFavourite = await recipe.edit.isFavourite(user.token);
-        setRecipe(() => ({...updatedRecipe})); // Refresh recipe to show/hide ★
+        setRecipe(() => (updatedRecipe)); // Refresh recipe to show/hide ★
       }
       
       // Refresh element
@@ -55,7 +62,7 @@ const RecipeListItem = ({item}) => {
         style={{transform: [{translateX: pan.x}, {translateY: 0}]}}
         {...panResponder.panHandlers}
         >
-        <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: recipe.getData()})}>
+        <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: recipe.getData(), isUserRecipe})}>
           <Text style={{position: "absolute", top: 5, right: 10, fontSize: 24, color: "#bb6400a0", fontWeight: "bold"}}>{recipe.isFavourite ? "★" : ""}</Text>
           <View style={staticStyles.recipeTextContainer}>
             <Text style={staticStyles.category}>{recipe.categories.map(category => category.name + " ")}</Text>

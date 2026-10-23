@@ -27,11 +27,13 @@ const RecipeList = ({route}) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categoryModalActive, setCategoryModalActive] = useState(false);
   
+  // Put selected categories before other categories
   const categorySorter = (a, b) => selectedCategories.includes(b) - selectedCategories.includes(a);
 
   const searchTimeout = useRef(null);
   const loadingTimeout = useRef(null);
 
+  // Add/remove category from selected categories
   const selectCategory = (category) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories([...selectedCategories.filter(c => c != category)])
@@ -40,16 +42,17 @@ const RecipeList = ({route}) => {
     }
   }
 
+  // Get all categories from the server db
   const loadCategories = async () => {
     setCategories(await fetchCategories());
   }
   
-  // Get recipe data
+  // Get data from server db
   useEffect(() => {
-    loadCategories();
+    loadCategories(); // Categories
 
     if (!isUserList) {
-      fetchRecipes(setRecipes);
+      fetchRecipes(setRecipes); // Featured recipes
     } else {
       if (user.isGuest) { // Guest user -> get data from the local storage
         readUserRecipes(setRecipes);
@@ -131,6 +134,7 @@ const RecipeList = ({route}) => {
               onPress={() => selectCategory(category)}
             />
           )}
+          {/* Button for showing more categories in modal */}
           <TextButton 
             buttonText={"..."}
             textStyle={{color: "black", fontSize: 14}}
@@ -142,9 +146,11 @@ const RecipeList = ({route}) => {
         <View style={staticStyles.mainContent}>
           <View style={staticStyles.listContainer}>
             {loading ? (
+              // Loading wheel
               <ActivityIndicator size="large" color="#6A569E" style={staticStyles.loader}/>
             ) : (
               isEmpty ? (
+                // Inform user that they don't have any recipes
                 <View style={[staticStyles.centered, {gap: 10}]}>
                   <Text style={{fontSize: 16, textAlign: "center"}}>{isUserList ? "You don't have any recipes yet." : "Sorry, something went wrong and we couldn't load public recipes."}</Text> 
                   <TouchableOpacity onPress={() => navigation.navigate(isUserList ? "Add Recipe" : "Recipe List")}>
@@ -152,28 +158,31 @@ const RecipeList = ({route}) => {
                   </TouchableOpacity>
                 </View>
               ) : (
+                // Show recipes
                 <View>
-                <Text style={{fontSize: 12, textAlign: 'center', color:'grey'}}>By swiping left you can set recipe as favourite</Text>
-                <Text style={{fontSize: 12, textAlign: 'center', color:'grey', marginBottom: 10}}>By swiping right you can edit recipe</Text>
-                <FlatList
-                  data={recipes.filter(
-                    recipe => (
-                      recipe.title.toLowerCase().includes(searchPhrase) || 
-                      recipe.description.toLowerCase().includes(searchPhrase)
-                    ) && (
-                      selectedCategories.length == 0 || 
-                      selectedCategories.some(category => recipe.categories.some(c => c.name == category.name))
-                    )
-                  )}
-                  keyExtractor={(item) => item.id}
-                  renderItem={(item) => <RecipeListItem item={item.item} />}
-                  />
+                  <Text style={{fontSize: 12, textAlign: 'center', color:'grey'}}>By swiping right you can mark recipe as favourite</Text>
+                  <Text style={{fontSize: 12, textAlign: 'center', color:'grey', marginBottom: 10}}>By swiping left you can edit recipe</Text>
+                  <FlatList
+                    // Filter recipes based on title, description and categories
+                    data={recipes.filter(
+                      recipe => (
+                        recipe.title.toLowerCase().includes(searchPhrase) || 
+                        recipe.description.toLowerCase().includes(searchPhrase)
+                      ) && (
+                        selectedCategories.length == 0 || 
+                        selectedCategories.some(category => recipe.categories.some(c => c.name == category.name))
+                      )
+                    )}
+                    keyExtractor={(item) => item.id}
+                    renderItem={(item) => <RecipeListItem item={item.item} isUserRecipe={isUserList} />}
+                    />
                 </View>
               )
             )}
           </View>
         </View>
       </View>
+      {/* Add recipe button shows on user recipe screen (not featured recipes), when loading is done and there's at least one recipe to show */}
       {!isUserList || isEmpty || loading ? null : (
         <TextButton 
           style={staticStyles.listAddButton} 
