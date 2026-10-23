@@ -51,6 +51,7 @@ const RecipeListItem = ({item, isUserRecipe}) => {
           newFavStatus = await toggleLocalFavourite(user.id || 0, recipe.id, recipe.isFavourite);
         } else {
           let updatedRecipe = new Recipe({...recipe});
+          updatedRecipe.isFavourite = recipe.isFavourite;
           newFavStatus = await updatedRecipe.edit.isFavourite(user.token);
         }
         setRecipe(current => ({...current, isFavourite: newFavStatus}));
