@@ -49,14 +49,20 @@ const Recipe = ({route}) => {
   // Add ingredients of the recipe to the shopping list
   const addToShoppingList = async () => {
     let success = true;
-    for (let index in recipe.ingredients) {
-      let ingredient = recipe.ingredients[index];
+    for (const ingredient of recipe.ingredients) {
+      const quantity = ingredient.quantity ? `${ingredient.quantity}` : "";
+      const unit = ingredient.unit ? `${ingredient.unit}` : "";
+
+      const fullItem = `${recipe.title.trim()}: ${quantity} ${unit} ${ingredient.name.trim()}`;
 
       // Create item to add to the shopping list
-      let shoppingItem = new ShoppingItem({name: ingredient.name, quantity: ingredient.quantity, unit: ingredient.unit})
-      success = shoppingItem.add.data(user.token);
-    }
+      let shoppingItem = new ShoppingItem({name: fullItem, quantity: ingredient.quantity, unit: ingredient.unit});
+      const result = await shoppingItem.add.data(user.token);
 
+      if (!result) {
+        success = false;
+      }
+    }
     if (success) {
       navigation.navigate("Shopping List");
     }
