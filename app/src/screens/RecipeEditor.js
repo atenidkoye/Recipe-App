@@ -12,7 +12,7 @@ import CategoryModal from "../components/CategoryModal";
 import AuthContext from '../components/AuthContext';
 import Recipe from "../utils/types/recipe";
 import { Alert } from "react-native";
-import { saveLocalRecipe } from "../utils/localDBConn";
+import { deleteLocalRecipe, saveLocalRecipe } from "../utils/localDBConn";
 
 const RecipeEditor = ({route}) => {
   const navigation = useNavigation();
@@ -73,7 +73,13 @@ const RecipeEditor = ({route}) => {
   }
   
   const deleteRecipe = async () => {
-    let success = await recipe.delete.data(user.token);
+    let success;
+    if (user.isGuest) {
+      success = await deleteLocalRecipe(recipe.id);
+    } else {
+      success = await recipe.delete.data(user.token);
+    }
+
     if (success) {
       navigation.navigate("Recipe List");
     }

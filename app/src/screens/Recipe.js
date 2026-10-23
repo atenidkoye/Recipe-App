@@ -11,6 +11,7 @@ import IconButton from "../components/IconButton";
 import img from "../static/img";
 import RecipeType from "../utils/types/recipe";
 import AuthContext from "../components/AuthContext";
+import { deleteLocalRecipe } from "../utils/localDBConn";
 
 const Recipe = ({ route }) => {
   // Provides navigation methods for moving between screens.
@@ -36,7 +37,12 @@ const Recipe = ({ route }) => {
 
   // Deletes the recipe and returns to the recipe list if deletion succeeds.
   const deleteRecipe = async () => {
-    let success = await recipe.delete.data(user.token);
+    let success;
+    if (user.isGuest) {
+      success = await deleteLocalRecipe(recipe.id);
+    } else {
+      success = await recipe.delete.data(user.token);
+    }
 
     if (success) {
       navigation.navigate("Recipe List");
@@ -164,7 +170,7 @@ const Recipe = ({ route }) => {
               iconStyle={{ filter: [{ invert: 0.9 }] }}
               onPress={() =>
                 navigation.navigate("Edit Recipe", {
-                  recipe: recipe.getData(),
+                  recipe: typeof recipe.getData === 'function' ? recipe.getData() : recipe,
                 })
               }
             />

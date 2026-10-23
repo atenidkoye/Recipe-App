@@ -1,9 +1,12 @@
 
+import { Alert } from "react-native";
 import {
   getDatabase,
   getIngredients,
   getRecipeCategories,
   getFavouriteRecipeIds,
+  addFavourite,
+  removeFavourite
 } from "../database/database";
 
 import Recipe from "./types/recipe";
@@ -171,3 +174,29 @@ export const saveLocalRecipe = async (recipe, userId = 0) => {
   // Returns the local database ID of the saved recipe.
   return recipeId;
 };
+
+export const toggleLocalFavourite = async (userId, recipeId, isFavourite) => {
+  try {
+    if (isFavourite) {
+      await removeFavourite(userId, recipeId);
+      return false;
+    } else {
+      await addFavourite(userId, recipeId);
+      return true;
+    }
+  } catch (err) {
+    Alert.alert("Error", err);
+    return isFavourite;
+  }
+}
+
+export const deleteLocalRecipe = async (recipeId) => {
+  try {
+    const db = await getDatabase();
+    await db.runAsync("DELETE FROM recipes WHERE id = ?", recipeId);
+    return true;
+  } catch (err) {
+    Alert.alert("Error", err);
+    return false;
+  }
+}
