@@ -9,11 +9,14 @@ const TimeModal = ({time, setTime, active, setActive}) => {
   const [hours, setHours] = useState(Math.floor(time / 60));
   const [minutes, setMinutes] = useState(time - (60 * Math.floor(time / 60)));
 
+  // Update hours (can't go below 0)
   const updateHours = (newHours) => {
     newHours = Math.max(0, newHours);
     setHours(newHours);
   }
 
+  // Update minutes
+  // Update hours if minutes go above 59 or below 0
   const updateMinutes = (newMinutes) => {
     if (newMinutes >= 60) {
       setHours(hours + 1);
@@ -26,12 +29,14 @@ const TimeModal = ({time, setTime, active, setActive}) => {
     }
   }
   
+  // Cancel button -> Close without saving the time and refresh values
   const close = () => {
     setHours(Math.floor(time / 60));
     setMinutes(time - (60 * Math.floor(time / 60)));
     setActive(false);
   }
 
+  // Save button -> Save time and close
   const save = () => {
     setTime(hours * 60 + minutes);
     setActive(false);

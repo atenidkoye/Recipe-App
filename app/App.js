@@ -16,7 +16,6 @@ import RegisterScreen from './src/screens/RegisterScreen';
 import RecipeList from './src/screens/RecipeList';
 import Account from './src/screens/Account';
 import ShoppingList from './src/screens/ShoppingList';
-import Search from './src/screens/Search';
 import Recipe from './src/screens/Recipe';
 import RecipeEditor from './src/screens/RecipeEditor';
 

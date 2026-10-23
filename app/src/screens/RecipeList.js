@@ -50,6 +50,9 @@ const RecipeList = ({ route }) => {
 
   // Controls the visibility of the category selection modal.
   const [categoryModalActive, setCategoryModalActive] = useState(false);
+  
+  // Put selected categories before other categories
+  const categorySorter = (a, b) => selectedCategories.includes(b) - selectedCategories.includes(a);
 
   // Moves selected categories to the beginning of the category list.
   const categorySorter = (a, b) =>
@@ -70,14 +73,14 @@ const RecipeList = ({ route }) => {
     }
   };
 
-  // Retrieves the available recipe categories.
+  // Get all categories from the server db
   const loadCategories = async () => {
     setCategories(await fetchCategories());
-  };
-
-  // Loads categories and the appropriate recipe list when the screen mounts.
+  }
+  
+  // Get data from server db
   useEffect(() => {
-    loadCategories();
+    loadCategories(); // Categories
 
     if (!isUserList) {
       // Featured recipes are retrieved from the backend.
@@ -187,34 +190,17 @@ const RecipeList = ({ route }) => {
           />
         </View>
 
-        {/* Displays up to four categories and a button for more categories. */}
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 20,
-            marginHorizontal: 10,
-          }}
-        >
-          {categories
-            .sort(categorySorter)
-            .slice(0, 4)
-            .map((category, index) => (
-              <TextButton
-                key={index}
-                buttonText={category.name}
-                textStyle={{ color: "black", fontSize: 14 }}
-                style={[
-                  staticStyles.categoryStyle,
-                  selectedCategories.includes(category)
-                    ? { backgroundColor: "#866EC0" }
-                    : null,
-                ]}
-                onPress={() => selectCategory(category)}
-              />
-            ))}
-
-          {/* Opens the modal to show all categories. */}
-          <TextButton
+        <View style={{flexDirection: "row", gap: 20, marginHorizontal: 10}}>
+          {categories.sort(categorySorter).slice(0, 4).map((category, index) => <TextButton 
+              key={index}
+              buttonText={category.name}
+              textStyle={{color: "black", fontSize: 14}}
+              style={[staticStyles.categoryStyle, selectedCategories.includes(category) ? {backgroundColor: "#866EC0"} : null]}
+              onPress={() => selectCategory(category)}
+            />
+          )}
+          {/* Button for showing more categories in modal */}
+          <TextButton 
             buttonText={"..."}
             textStyle={{ color: "black", fontSize: 14 }}
             style={staticStyles.categoryStyle}
@@ -302,8 +288,7 @@ const RecipeList = ({ route }) => {
           </View>
         </View>
       </View>
-
-      {/* Shows the add-recipe button for the user's recipe list when available. */}
+      {/* Add recipe button shows on user recipe screen (not featured recipes), when loading is done and there's at least one recipe to show */}
       {!isUserList || isEmpty || loading ? null : (
         <TextButton
           style={staticStyles.listAddButton}

@@ -52,14 +52,10 @@ const LoginScreen = () => {
             buttonText="Login"
             onPress={() => login(email, password, setUser)}
           />
-
-          {/* Provide options to register or use the app as a guest. */}
-          <View style={[staticStyles.rowButtons, { marginTop: 20 }]}>
-            <TextButton
-              style={staticStyles.halfButton}
-              buttonText="Create account"
-              onPress={() => navigation.navigate("Register")}
-            />
+          <View style={[staticStyles.rowButtons, {marginTop: 20}]}>
+            <TextButton style={staticStyles.halfButton} buttonText="Create account" onPress={() => navigation.navigate("Register")}/> 
+            <TextButton style={staticStyles.halfButton} buttonText="Continue as Guest" onPress={() => continueAsGuest(setUser)} />
+          </View>
 
             <TextButton
               style={staticStyles.halfButton}

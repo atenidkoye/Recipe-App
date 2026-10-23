@@ -6,7 +6,7 @@ import AuthContext from './AuthContext';
 import Recipe from '../utils/types/recipe';
 import { toggleLocalFavourite } from '../utils/localDBConn';
 
-const RecipeListItem = ({item}) => {
+const RecipeListItem = ({item, isUserRecipe}) => {
   const navigation = useNavigation();
   const { user } = useContext(AuthContext);
 
@@ -22,7 +22,13 @@ const RecipeListItem = ({item}) => {
   const pan = useRef(new Animated.ValueXY).current;
   const panResponder = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
+    
+    // Swipping action
     onPanResponderMove: (_, gesture) => {
+      if (!isUserRecipe) {
+        return;
+      }
+
       pan.x.setValue(gesture.dx);
       if (pan.x._value < -10) { // Swipping left -> edit recipe
         setActionColour("#FF8000A0");
@@ -33,6 +39,7 @@ const RecipeListItem = ({item}) => {
       }
     },
 
+    // Swiping finished
     onPanResponderRelease: async () => {
       if (pan.x._value < -90) { // Left -> edit recipe
         navigation.navigate("Edit Recipe", {recipe: getRecipeData()});

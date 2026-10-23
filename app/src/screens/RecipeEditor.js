@@ -42,30 +42,32 @@ const RecipeEditor = ({route}) => {
   const [instructions, setInstructions] = useState(editing ? recipe.instructions.split("\n") : []);
   const [categories, setCategories] = useState(editing ? [...recipe.categories] : []);
 
+  // Update ingredient state
   const updateIngredients = (text, index, type, target = null) => {
     let temp = ingredients;
-    if (index >= ingredients.length) {
+    if (index >= ingredients.length) { // Add a new ingredient
       temp.push({"name": text, "quantity": "", "unit": ""});
-    } else {
+    } else { // Update ingredient field
       temp[index][type] = text;
     }
     setIngredients([...temp]);
-    if (target) target.clear();
+    if (target) target.clear(); // Clear text input if adding new ingredient
   }
 
   const removeIngredient = (index) => {
     setIngredients(ingredients.filter((_, i) => index != i))
   }
 
+  // Update instructions state
   const updateInstructions = (text, index, target = null) => {
     let temp = instructions;
-    if (index >= instructions.length) {
+    if (index >= instructions.length) { // Add a new instruction
       temp.push(text);
-    } else {
+    } else { // Update instruction text
       temp[index] = text;
     }
     setInstructions([...temp]);
-    if (target) target.clear();
+    if (target) target.clear(); // Clear text input if adding a new instruction
   }
 
   const removeInstruction = (index) => {
@@ -80,13 +82,14 @@ const RecipeEditor = ({route}) => {
       success = await recipe.delete.data(user.token);
     }
 
-    if (success) {
+    if (success) { // Navigate to recipe list after successfull recipe deletion
       navigation.navigate("Recipe List");
     }
   }
 
   
   const saveRecipe = async () => {
+    // Create a recipe object to save
     const newRecipe = new Recipe({
       id: editing ? recipe.id : null,
       title,
@@ -97,6 +100,7 @@ const RecipeEditor = ({route}) => {
       is_public: Number(isPublic),
     });
 
+    // Add categories and ingredients
     newRecipe.categories = categories;
     newRecipe.ingredients = ingredients;
 
@@ -130,6 +134,8 @@ const RecipeEditor = ({route}) => {
         <ScrollView style={staticStyles.editorForm}>
           <View style={staticStyles.editorFormPart}>
             <Text style={staticStyles.editorMainLabel}>Main information</Text>
+
+            {/* Public/Private switch button */}
             <View style={{position: "absolute", top: 10, right: 10, flexDirection: "row", gap: 10}}>
               <TextButton
                 buttonText={isPublic ? "Make private" : "Make public"}
@@ -138,8 +144,12 @@ const RecipeEditor = ({route}) => {
                 textStyle={{fontSize: 14}}
               />
             </View>
+            
+            {/* Title */}
             <Text style={staticStyles.label}>Name</Text>
             <TextInput placeholder="Name of the recipe..." value={title} onChangeText={setTitle} style={staticStyles.editorInput} />
+            
+            {/* Description */}
             <Text style={staticStyles.label}>Description</Text>
             <TextInput 
               placeholder="Short description of the recipe..." 
@@ -148,6 +158,8 @@ const RecipeEditor = ({route}) => {
               multiline={true}
               style={[staticStyles.editorInput, staticStyles.editorBigInput]}
             />
+
+            {/* Categories */}
             <View style={{flexDirection: "row", alignItems: "center"}}>
               <Text style={{fontSize: 18}}>Categories</Text>
               <IconButton icon={img.edit} onPress={() => setCategoryModalActive(true)} />
@@ -162,9 +174,13 @@ const RecipeEditor = ({route}) => {
               setActiveCategories={setCategories}
             />
           </View>
+
+
           <View style={staticStyles.editorFormPart}>
             <Text style={staticStyles.editorMainLabel}>Additional information</Text>
             <View style={staticStyles.editorNumericInfo}>
+
+              {/* Servings */}
               <View style={staticStyles.editorLabelAndInput}>
                 <Text style={staticStyles.label}>Servings</Text>
                 <View style={staticStyles.editorServings}>
@@ -173,6 +189,8 @@ const RecipeEditor = ({route}) => {
                   <IconButton icon={img.plus} iconStyle={{width: 16, height: 16}} onPress={() => setServings(servings + 1)} />
                 </View>
               </View>
+
+              {/* Cooking time */}
               <View style={staticStyles.editorLabelAndInput}>
                 <Text style={staticStyles.label}>Cooking time</Text>
                 <TextButton 
@@ -182,11 +200,16 @@ const RecipeEditor = ({route}) => {
                 /> 
                 <TimeModal time={cookingTime} setTime={setCookingTime} active={timeModalActive} setActive={setTimeModalActive} />
               </View>
+
             </View>
           </View>
+
+          {/* Ingredients */}
           <View style={staticStyles.editorFormPart}>
             <Text style={staticStyles.editorMainLabel}>Ingredients</Text>
             {ingredients.map((ingredient, index) => <View style={staticStyles.editorMultiRow} key={index}>
+              
+              {/* Ingredient name */}
               <TextInput 
                 value={`${ingredient.name}`} 
                 placeholder="Ingredient..."
@@ -194,6 +217,8 @@ const RecipeEditor = ({route}) => {
                 onChangeText={(text) => updateIngredients(text, index, "name")}
                 onEndEditing={() => !ingredient.name && !ingredient.amount && !ingredient.unit ? removeIngredient(index) : null}
               />
+
+              {/* Ingredient quantity */}
               <TextInput 
                 value={`${ingredient.quantity}`} 
                 placeholder="Qty..."
@@ -201,6 +226,8 @@ const RecipeEditor = ({route}) => {
                 onChangeText={(text) => updateIngredients(text, index, "quantity")}
                 onEndEditing={() => !ingredient.name && !ingredient.quantity && !ingredient.unit ? removeIngredient(index) : null}
               />
+
+              {/* Ingriedient unit */}
               <TextInput 
                 value={`${ingredient.unit}`}
                 placeholder="Unit..." 
@@ -208,6 +235,8 @@ const RecipeEditor = ({route}) => {
                 onChangeText={(text) => updateIngredients(text, index, "unit")}
                 onEndEditing={() => !ingredient.name && !ingredient.amount && !ingredient.unit ? removeIngredient(index) : null}
               />
+
+              {/* Remove ingredient button */}
               <IconButton
                 icon={img.delete}
                 iconStyle={{filter: [{invert: 0.9}]}}
@@ -215,15 +244,21 @@ const RecipeEditor = ({route}) => {
                 style={[staticStyles.cancelButton, staticStyles.editorIconButton]}
               />
             </View>)}
+
+            {/* New ingredient */}
             <TextInput
               placeholder={`Next ingredient...`} 
               style={[staticStyles.editorInput, {marginBottom: 5}]} 
               onEndEditing={(e) => e.nativeEvent.text ? updateIngredients(e.nativeEvent.text, ingredients.length, "text", e.currentTarget) : null}
             />
           </View>
+
+          {/* Instructions */}
           <View style={staticStyles.editorFormPart}>
             <Text style={staticStyles.editorMainLabel}>Instructions</Text>
             {instructions.map((instruction, index) => <View key={index} style={staticStyles.editorMultiRow}>
+              
+              {/* Instruction text */}
               <TextInput 
                 value={`${instruction}`} 
                 placeholder="Step..."
@@ -231,6 +266,8 @@ const RecipeEditor = ({route}) => {
                 onChangeText={(text) => updateInstructions(text, index)}
                 onEndEditing={() => !instruction ? removeInstruction(index) : null}
               />
+
+              {/* Remove instruction button */}
               <IconButton 
                 icon={img.delete}
                 iconStyle={{filter: [{invert: 0.9}]}}
@@ -238,6 +275,8 @@ const RecipeEditor = ({route}) => {
                 style={[staticStyles.cancelButton, staticStyles.editorIconButton]}
               />
             </View>)}
+
+            {/* New instruction */}
             <TextInput
               placeholder={`Next step...`} 
               style={[staticStyles.editorInput, {marginBottom: 5}]} 
@@ -246,7 +285,11 @@ const RecipeEditor = ({route}) => {
           </View>
         </ScrollView>
       </View>
+
+      {/* Buttons */}
       <View style={staticStyles.editorButtons}>
+
+        {/* Recipe can be deleted only if it's already created */}
         { editing ? <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} /> : null }
         <TextButton style={[staticStyles.editorButton, staticStyles.cancelButton]} buttonText="Cancel" onPress={() => navigation.goBack()} />
         <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton]} buttonText="Save" onPress={saveRecipe} />
