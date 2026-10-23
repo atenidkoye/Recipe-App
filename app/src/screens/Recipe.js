@@ -47,12 +47,15 @@ const Recipe = ({route}) => {
   // }
 
   // Add ingredients of the recipe to the shopping list
+  // due to the structure of shopping list, to make sure data are sending correctly, they should be sent like "Title: item" (Cake: Sugar)
   const addToShoppingList = async () => {
     let success = true;
     for (const ingredient of recipe.ingredients) {
+      // putting quantity and units into the single line
       const quantity = ingredient.quantity ? `${ingredient.quantity}` : "";
       const unit = ingredient.unit ? `${ingredient.unit}` : "";
 
+      // sticking recipe title and ingredients (should output "Cake: 200 g Sugar")
       const fullItem = `${recipe.title.trim()}: ${quantity} ${unit} ${ingredient.name.trim()}`;
 
       // Create item to add to the shopping list
