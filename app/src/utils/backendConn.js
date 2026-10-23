@@ -85,8 +85,18 @@ export const fetchCategories = async () => {
   return body;
 }
 
+
+/**
+ * Update user profile on the server via PUT API call
+ * 
+ * @param {string} userToken Token used to authrorize user
+ * @param {string} name Name to be set for user
+ * @param {string} email Email to be set for user
+ * @returns {object} Updateduser object
+ */
 export const updateUserProfile = async (userToken, name, email) => {
   try {
+    // PUT API call
     const response = await fetch('http://10.0.2.2:4000/api/users/me', {
       method: 'PUT',
       headers: {
@@ -98,11 +108,13 @@ export const updateUserProfile = async (userToken, name, email) => {
 
     const data = await response.json();
 
+    // Error
     if (!response.ok) {
       Alert.alert("Error", data.message);
       return null;
     }
 
+    // Updated user data
     return data.user;
   } catch (err) {
     Alert.alert("Error", err);

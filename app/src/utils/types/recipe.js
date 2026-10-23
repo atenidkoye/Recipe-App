@@ -23,6 +23,7 @@ class Recipe {
         this.is_public = is_public;
     }
 
+    // Get an object without the functions for passing as a prop
     getData() {
         return { 
             id: this.id, 
@@ -38,7 +39,9 @@ class Recipe {
         }
     }
 
+    // Fetch functions
     fetch = {
+        // Fetch categories from server db and set
         categories: async () => {
             const response = await fetch(`http://10.0.2.2:4000/api/recipes/${this.id}/categories`);
             const body = await response.json();
@@ -50,6 +53,7 @@ class Recipe {
             this.categories = body;
         },
 
+        // Fetch ingredients from server db and set
         ingredients: async () => {
             const response = await fetch(`http://10.0.2.2:4000/api/ingredients/recipe/${this.id}`);
             const body = await response.json();
@@ -62,6 +66,7 @@ class Recipe {
             this.ingredients = body;
         },
 
+        // Fetch isFavourite from server db and set
         isFavourite: async (userToken) => {
             const response = await fetch(`http://10.0.2.2:4000/api/favourites/${this.id}`, {
                 withCredentials: true,
@@ -83,7 +88,10 @@ class Recipe {
         }
     };
 
+    // Edit funtions
     edit = {
+
+        // Edit the whole recipe
         data: async (userToken, newRecipe) => {
             const response = await fetch(`http://10.0.2.2:4000/api/recipes/${this.id}`, {
                 method: "PUT",
@@ -101,12 +109,14 @@ class Recipe {
                 return false;
             }
 
+            // Edit categories
             let error = await this.edit.categories(userToken, newRecipe);
             if (error) {
                 Alert.alert("Error", error);
                 return false;
             }
 
+            // Edit ingredients
             error = await this.edit.ingredients(userToken, newRecipe);
             if (error) {
                 Alert.alert("Error", error);
@@ -116,6 +126,7 @@ class Recipe {
             return true;
         },
 
+        // Edit isFavourite
         isFavourite: async (userToken) => {
             const response = await fetch(`http://10.0.2.2:4000/api/favourites/${this.id}`, {
                 method: this.isFavourite ? "DELETE" : "POST", // Already favourited recipe should lose the status and vice versa
@@ -135,6 +146,7 @@ class Recipe {
             return !this.isFavourite;
         },
 
+        // Edit categories (delete old ones and add new ones)
         categories: async (userToken, newRecipe) => {
             let error = await this.delete.categories(userToken);
 
@@ -147,6 +159,7 @@ class Recipe {
             return error;
         },
 
+        // Edit ingredients (delete old ones and add new ones)
         ingredients: async (userToken, newRecipe) => {
             let error = await this.delete.ingredients(userToken);
 
@@ -160,7 +173,10 @@ class Recipe {
         }
     };
 
+    // Add functions
     add = {
+
+        // Add a whole recipe
         data: async (userToken) => {
             const response = await fetch(`http://10.0.2.2:4000/api/recipes`, {
                 method: "POST",
@@ -200,6 +216,7 @@ class Recipe {
             return true;
         },
 
+        // Add categories
         categories: async (userToken) => {
             for (let index in this.categories) {
                 let category = this.categories[index];
@@ -221,6 +238,7 @@ class Recipe {
             return "";
         },
 
+        // Add ingredients
         ingredients: async (userToken) => {
             for (let index in this.ingredients) {
                 let ingredient = this.ingredients[index];
@@ -244,8 +262,13 @@ class Recipe {
         }
     };
 
+    // Delete functions
     delete = {
+
+        // Delete a whole recipe
         data: async (userToken) => {
+
+            // Delete categories
             let error = await this.delete.categories(userToken);
 
             if (error) {
@@ -253,6 +276,7 @@ class Recipe {
                 return false;
             }
 
+            // Delete ingredients
             error = await this.delete.ingredients(userToken);
             
             if (error) {
@@ -260,7 +284,7 @@ class Recipe {
                 return false;
             }
 
-            if (this.isFavourite) {
+            if (this.isFavourite) { // Remove from favourites if in favourites
                 error = await this.delete.isFavourite(userToken);
                 if (error) {
                     Alert.alert("Error", error);
@@ -268,6 +292,7 @@ class Recipe {
                 }
             }
 
+            // Delete recipe
             const response = await fetch(`http://10.0.2.2:4000/api/recipes/${this.id}`, {
                 method: "DELETE",
                 withCredentials: true,
@@ -285,6 +310,7 @@ class Recipe {
             return true;
         },
 
+        // Delete isFavourite
         isFavourite: async (userToken) => {
             const response = await fetch(`http://10.0.2.2:4000/api/favourites/${this.id}`, {
                 method: "DELETE", 
@@ -303,6 +329,7 @@ class Recipe {
             return "";
         },
 
+        // Delete categories
         categories: async (userToken) => {
             for (let index in this.categories) {
                 let category = this.categories[index];
@@ -324,6 +351,7 @@ class Recipe {
             return "";
         },
 
+        // Delete ingredients
         ingredients: async (userToken) => {
             for (let index in this.ingredients) {
                 let ingredient = this.ingredients[index];
