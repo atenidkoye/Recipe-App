@@ -6,7 +6,9 @@ import {
   getRecipeCategories,
   getFavouriteRecipeIds,
   addFavourite,
-  removeFavourite
+  removeFavourite,
+  getOrCreateShoppingList,
+  addShoppingListItem
 } from "../database/database";
 
 import Recipe from "./types/recipe";
@@ -186,7 +188,7 @@ export const toggleLocalFavourite = async (userId, recipeId, isFavourite) => {
       return true;
     }
   } catch (err) {
-    Alert.alert("Error", err);
+    Alert.alert("Error", err.message || 'Something went wrong');
     return isFavourite;
   }
 }
@@ -198,7 +200,38 @@ export const deleteLocalRecipe = async (recipeId) => {
     await db.runAsync("DELETE FROM recipes WHERE id = ?", recipeId);
     return true;
   } catch (err) {
-    Alert.alert("Error", err);
+    Alert.alert("Error", err.message || 'Something went wrong');
+    return false;
+  }
+}
+
+// adds the ingredients of recipe to local shopping list
+export const addToLocalShoppingList = async (userId, recipeTitle, ingredients) => {
+  try {
+    const listId = await getOrCreateShoppingList(userId);
+
+    for (const ingredient of ingredients) {
+      const quantity = ingredient.quantity ? `${ingredient.quantity}` : "";
+      const unit = ingredient.unit ? `${ingredient.unit}` : "";
+
+      // sticking recipe title and ingredients (should output "Cake: 200 g Sugar")
+      const fullItem = `${recipeTitle.trim()}: ${quantity} ${unit} ${ingredient.name.trim()}`;
+
+      // transforming quantity to null for sqlite
+      let qty = ingredient.quantity;
+      if (qty == "" || qty == null) qty = null;
+      else qty = Number(qty);
+
+      await addShoppingListItem(
+        listId,
+        fullItem,
+        qty !== null && Number.isFinite(qty) ? qty : null,
+        ingredient.unit || null
+      );
+    }
+    return true;
+  } catch (err) {
+    Alert.alert("Error", err.message || 'Something went wrong');
     return false;
   }
 }

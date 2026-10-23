@@ -10,7 +10,7 @@ import IconButton from "../components/IconButton";
 import img from "../static/img";
 import RecipeType from "../utils/types/recipe";
 import AuthContext from "../components/AuthContext";
-import { deleteLocalRecipe } from "../utils/localDBConn";
+import { deleteLocalRecipe, addToLocalShoppingList } from "../utils/localDBConn";
 import ShoppingItem from '../utils/types/shopping_list'
 
 const Recipe = ({ route }) => {
@@ -65,20 +65,25 @@ const Recipe = ({ route }) => {
   // due to the structure of shopping list, to make sure data are sending correctly, they should be sent like "Title: item" (Cake: Sugar)
   const addToShoppingList = async () => {
     let success = true;
-    for (const ingredient of recipe.ingredients) {
-      // putting quantity and units into the single line
-      const quantity = ingredient.quantity ? `${ingredient.quantity}` : "";
-      const unit = ingredient.unit ? `${ingredient.unit}` : "";
 
-      // sticking recipe title and ingredients (should output "Cake: 200 g Sugar")
-      const fullItem = `${recipe.title.trim()}: ${quantity} ${unit} ${ingredient.name.trim()}`;
-
-      // Create item to add to the shopping list
-      let shoppingItem = new ShoppingItem({name: fullItem, quantity: ingredient.quantity, unit: ingredient.unit});
-      const result = await shoppingItem.add.data(user.token);
-
-      if (!result) {
-        success = false;
+    if (user.isGuest) {
+      success = await addToLocalShoppingList(user.id || 0, recipe.title, recipe.ingredients);
+    } else {
+        for (const ingredient of recipe.ingredients) {
+          // putting quantity and units into the single line
+          const quantity = ingredient.quantity ? `${ingredient.quantity}` : "";
+          const unit = ingredient.unit ? `${ingredient.unit}` : "";
+    
+          // sticking recipe title and ingredients (should output "Cake: 200 g Sugar")
+          const fullItem = `${recipe.title.trim()}: ${quantity} ${unit} ${ingredient.name.trim()}`;
+    
+          // Create item to add to the shopping list
+          let shoppingItem = new ShoppingItem({name: fullItem, quantity: ingredient.quantity, unit: ingredient.unit});
+          const result = await shoppingItem.add.data(user.token);
+    
+          if (!result) {
+            success = false;
+          }
       }
     }
     if (success) {
