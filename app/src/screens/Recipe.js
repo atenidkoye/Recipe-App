@@ -129,11 +129,11 @@ const Recipe = ({route}) => {
           )}
         </View>
         <View style={[staticStyles.editorButtons, {marginTop: 10}]}>
-          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: isUserRecipe ? "55%" : "70%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
+          <TextButton style={[staticStyles.editorButton, staticStyles.confirmButton, {width: isUserRecipe ? "55%" : "80%"}]} buttonText="Go Back" onPress={() => navigation.goBack()} />
           {isUserRecipe ? <IconButton style={staticStyles.cancelButton} icon={img.delete} iconStyle={{filter: [{invert: 0.9}]}} onPress={deleteRecipe} /> : null }
           <IconButton style={{backgroundColor: "#367a09"}} icon={img.cart} iconStyle={{filter: [{invert: 0.9}]}} onPress={addToShoppingList} />
           {isUserRecipe ? <IconButton style={{backgroundColor: "#FF8000"}} icon={img.edit} iconStyle={{filter: [{invert: 0.9}]}} onPress={() => navigation.navigate("Edit Recipe", {recipe: recipe.getData()})} /> : null }
-          {!isUserRecipe ? <IconButton style={{backgroundColor: "#FF8000"}} icon={img.add} iconStyle={{filter: [{invert: 0.9}]}} onPress={addRecipe} /> : null }
+          {/* {!isUserRecipe ? <IconButton style={{backgroundColor: "#FF8000"}} icon={img.add} iconStyle={{filter: [{invert: 0.9}]}} onPress={addRecipe} /> : null } */}
         </View>
         </ScrollView>
       </View>
