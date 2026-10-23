@@ -16,6 +16,8 @@ const RecipeListItem = ({item, isUserRecipe}) => {
   const pan = useRef(new Animated.ValueXY).current;
   const panResponder = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
+    
+    // Swipping action
     onPanResponderMove: (_, gesture) => {
       if (!isUserRecipe) {
         return;
@@ -31,6 +33,7 @@ const RecipeListItem = ({item, isUserRecipe}) => {
       }
     },
 
+    // Swiping finished
     onPanResponderRelease: async () => {
       if (pan.x._value < -90) { // Left -> edit recipe
         navigation.navigate("Edit Recipe", {recipe: recipe.getData()});
