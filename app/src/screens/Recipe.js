@@ -20,36 +20,39 @@ const Recipe = ({route}) => {
 
   const isUserRecipe = route.params.isUserRecipe;
 
+  // Create recipe object
   const recipeParam = route.params.recipe;
   let recipe;
   recipe = new RecipeType({...recipeParam});
   recipe.categories = recipeParam.categories;
   recipe.ingredients = recipeParam.ingredients;
   recipe.isFavourite = recipeParam.isFavourite;
-    
-
+  
   const instructionsList = recipe.instructions ? recipe.instructions.split("\n") : [];
 
   const deleteRecipe = async () => {
     let success = await recipe.delete.data(user.token);
-    if (success) {
+    if (success) { // After success recipe deletion navigate to recipe list
       navigation.navigate("Recipe List");
     }
   }
 
-  const addRecipe = async () => {
-    Alert.alert("Error", "Under maintenance");
-    return;
-    let success = await recipe.add.data(user.token);
-    if (success) {
-      Alert.alert("Sucess", `Successfully added ${recipe.title} to your recipes.`)
-    }
-  }
+  // const addRecipe = async () => {
+  //   Alert.alert("Error", "Under maintenance");
+  //   return;
+  //   let success = await recipe.add.data(user.token);
+  //   if (success) {
+  //     Alert.alert("Sucess", `Successfully added ${recipe.title} to your recipes.`)
+  //   }
+  // }
 
+  // Add ingredients of the recipe to the shopping list
   const addToShoppingList = async () => {
     let success = true;
     for (let index in recipe.ingredients) {
       let ingredient = recipe.ingredients[index];
+
+      // Create item to add to the shopping list
       let shoppingItem = new ShoppingItem({name: ingredient.name, quantity: ingredient.quantity, unit: ingredient.unit})
       success = shoppingItem.add.data(user.token);
     }
