@@ -56,13 +56,6 @@ const LoginScreen = () => {
             <TextButton style={staticStyles.halfButton} buttonText="Create account" onPress={() => navigation.navigate("Register")}/> 
             <TextButton style={staticStyles.halfButton} buttonText="Continue as Guest" onPress={() => continueAsGuest(setUser)} />
           </View>
-
-            <TextButton
-              style={staticStyles.halfButton}
-              buttonText="Continue as Guest"
-              onPress={() => continueAsGuest(setUser)}
-            />
-          </View>
         </View>
       </View>
     </SafeAreaView>

@@ -175,6 +175,7 @@ export const saveLocalRecipe = async (recipe, userId = 0) => {
   return recipeId;
 };
 
+// switcher for favourite recipe in local db
 export const toggleLocalFavourite = async (userId, recipeId, isFavourite) => {
   try {
     if (isFavourite) {
@@ -190,6 +191,7 @@ export const toggleLocalFavourite = async (userId, recipeId, isFavourite) => {
   }
 }
 
+// delete recipe locally
 export const deleteLocalRecipe = async (recipeId) => {
   try {
     const db = await getDatabase();

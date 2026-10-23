@@ -1,4 +1,3 @@
-
 import {
   View,
   Text,
@@ -53,10 +52,6 @@ const RecipeList = ({ route }) => {
   
   // Put selected categories before other categories
   const categorySorter = (a, b) => selectedCategories.includes(b) - selectedCategories.includes(a);
-
-  // Moves selected categories to the beginning of the category list.
-  const categorySorter = (a, b) =>
-    selectedCategories.includes(b) - selectedCategories.includes(a);
 
   // Keeps references to timers used for search and loading.
   const searchTimeout = useRef(null);
@@ -269,9 +264,7 @@ const RecipeList = ({ route }) => {
                     (recipe) =>
                       (
                         recipe.title.toLowerCase().includes(searchPhrase) ||
-                        recipe.description
-                          .toLowerCase()
-                          .includes(searchPhrase)
+                        (recipe.description && recipe.description.toLowerCase().includes(searchPhrase))
                       ) &&
                       (selectedCategories.length == 0 ||
                         selectedCategories.some((category) =>
@@ -280,8 +273,8 @@ const RecipeList = ({ route }) => {
                           )
                         ))
                   )}
-                  keyExtractor={(item) => item.id}
-                  renderItem={(item) => <RecipeListItem item={item.item} />}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={(item) => <RecipeListItem item={item.item} isUserRecipe={isUserList} />}
                 />
               </View>
             )}
