@@ -4,6 +4,7 @@ import { Animated, PanResponder, TouchableOpacity, View, Text, Image } from 'rea
 import staticStyles from '../static/styles';
 import AuthContext from './AuthContext';
 import Recipe from '../utils/types/recipe';
+import { toggleLocalFavourite } from '../utils/localDBConn';
 
 const RecipeListItem = ({item, isUserRecipe}) => {
   const navigation = useNavigation();
@@ -11,6 +12,11 @@ const RecipeListItem = ({item, isUserRecipe}) => {
 
   const [recipe, setRecipe] = useState(item);
   const [actionColour, setActionColour] = useState("transparent");
+
+  // getting recipe data. If this is an object from sqlite, the it will take it, if it's class - then calls recipe.getData()
+  const getRecipeData = () => {
+    return typeof recipe.getData === 'function' ? recipe.getData() : recipe;
+  }
 
   // For swiping actions (edit, favourite)
   const pan = useRef(new Animated.ValueXY).current;
@@ -36,13 +42,18 @@ const RecipeListItem = ({item, isUserRecipe}) => {
     // Swiping finished
     onPanResponderRelease: async () => {
       if (pan.x._value < -90) { // Left -> edit recipe
-        navigation.navigate("Edit Recipe", {recipe: recipe.getData()});
+        navigation.navigate("Edit Recipe", {recipe: getRecipeData()});
       } else if (pan.x._value > 90) { // Right -> mark/unmark recipe as favourite
-        let updatedRecipe = new Recipe({...recipe});
-        updatedRecipe.categories = recipe.categories;
-        updatedRecipe.ingredients = recipe.ingredients;
-        updatedRecipe.isFavourite = await recipe.edit.isFavourite(user.token);
-        setRecipe(() => (updatedRecipe)); // Refresh recipe to show/hide ★
+        let newFavStatus;
+
+        // dividing logic for guest user and logged in user
+        if (user.isGuest) {
+          newFavStatus = await toggleLocalFavourite(user.id || 0, recipe.id, recipe.isFavourite);
+        } else {
+          let updatedRecipe = new Recipe({...recipe});
+          newFavStatus = await updatedRecipe.edit.isFavourite(user.token);
+        }
+        setRecipe(current => ({...current, isFavourite: newFavStatus}));
       }
       
       // Refresh element
@@ -62,7 +73,7 @@ const RecipeListItem = ({item, isUserRecipe}) => {
         style={{transform: [{translateX: pan.x}, {translateY: 0}]}}
         {...panResponder.panHandlers}
         >
-        <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: recipe.getData(), isUserRecipe})}>
+        <TouchableOpacity style={staticStyles.recipeCard} onPress={() => navigation.navigate("Recipe", {recipe: getRecipeData()})}>
           <Text style={{position: "absolute", top: 5, right: 10, fontSize: 24, color: "#bb6400a0", fontWeight: "bold"}}>{recipe.isFavourite ? "★" : ""}</Text>
           <View style={staticStyles.recipeTextContainer}>
             <Text style={staticStyles.category}>{recipe.categories.map(category => category.name + " ")}</Text>
