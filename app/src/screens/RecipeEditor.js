@@ -136,14 +136,15 @@ const RecipeEditor = ({route}) => {
             <Text style={staticStyles.editorMainLabel}>Main information</Text>
 
             {/* Public/Private switch button */}
-            <View style={{position: "absolute", top: 10, right: 10, flexDirection: "row", gap: 10}}>
-              <TextButton
-                buttonText={isPublic ? "Make private" : "Make public"}
-                onPress={() => setIsPublic(!isPublic)}
-                style={staticStyles.editorPublicButton}
-                textStyle={{fontSize: 14}}
-              />
-            </View>
+            {!user.isGuest ? <View style={{position: "absolute", top: 10, right: 10, flexDirection: "row", gap: 10}}>
+                <TextButton
+                  buttonText={isPublic ? "Make private" : "Make public"}
+                  onPress={() => setIsPublic(!isPublic)}
+                  style={staticStyles.editorPublicButton}
+                  textStyle={{fontSize: 14}}
+                />
+              </View> : null
+            }
             
             {/* Title */}
             <Text style={staticStyles.label}>Name</Text>
